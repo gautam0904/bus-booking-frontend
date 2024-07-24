@@ -1,0 +1,33 @@
+<app-loading *ngIf="loading"></app-loading>
+<div *ngIf="!loading" class="container full-height d-flex justify-content-center align-items-center">
+    <div class="login-form w-lg-25 w-mg-50">
+        <div>
+            <form [formGroup]="loginform" (ngSubmit)="onsubmit()">
+                <label class="fs-3 fw-1" for="chk" aria-hidden="true">Log in</label>
+
+
+                <div class="form-floating">
+                    <input [ngClass]="{'form-control my-2' : true, 'border-danger' : loginform.controls['email'].invalid && loginform.controls['email'].touched }" type="email" formControlName="email" placeholder="" required="">
+
+                    <div class="text-danger" *ngIf="loginform.controls['email'].invalid && loginform.controls['email'].touched"> Please provide
+                        email address.</div>
+                    <label for="floatingTextarea">Email</label>
+                </div>
+
+                <div class="form-floating">
+                    <input [ngClass]="{'form-control my-2' : true, 'border-danger' : loginform.controls['password'].invalid && loginform.controls['password'].touched }" type="password" formControlName="password" placeholder="" required="">
+
+                <div class="text-danger" *ngIf="loginform.controls['password'].invalid && loginform.controls['password'].touched"> Please
+                    provide password.</div>
+                    <label for="floatingTextarea">Password</label>
+                </div>
+
+               
+
+                <a class="text-decoration-none" routerLink="/auth/signup">Create an account</a>
+
+                <button class="button-primary" type="submit">Log in</button>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,58 @@
+<app-loading *ngIf="loading"></app-loading>
+<div *ngIf="!loading" class="container full-height d-flex justify-content-center align-items-center">
+    <div class="signup-form">
+        <div>
+            <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+                <button *ngIf="isedit" type="button" class="ms-auto mt-3 border-0 rounded bg-transparent" routerLink="/" (click)="this.signupForm.reset(); isedit=false"><i class="pi pi-times"></i></button>
+                <label class="fs-1 fw-1" for="chk" aria-hidden="true" *ngIf="!isedit">Register</label>
+                <label class="fs-3 fw-1" style="margin-top: 0;" aria-hidden="true" *ngIf="isedit">Edit Your
+                    Profile</label>
+
+                <div class="form-floating">
+                    <input [ngClass]="{'form-control':true , 'border-danger': signupForm.get('name')?.invalid && signupForm.get('name')?.touched}" for="name" type="text" formControlName="name" required="" placeholder="">
+                    <label for="floatingTextarea" style="background: transparent;" >Name</label>
+
+                    <div class="text-danger" *ngIf="signupForm.get('name')?.invalid && signupForm.get('name')?.touched">
+                        Name is required .
+                    </div>
+                </div>
+
+
+
+
+                <div *ngIf="isedit">{{profile?.email}}</div>
+
+                <div class="form-floating">
+                    <input *ngIf="!isedit" [ngClass]="{'form-control': true , 'border-danger' : signupForm.get('email')?.invalid && signupForm.get('email')?.touched}" for="email" type="email" formControlName="email" placeholder="" required="">
+                    <label for="floatingTextarea" style="background: transparent;" >Email</label>
+
+                    <div class="text-danger" *ngIf="signupForm.get('email')?.invalid && signupForm.get('email')?.touched">
+                        Email is required and must be a valid email address.
+                    </div>
+                </div>
+
+                <div class="form-floating">
+                    <input *ngIf="!isedit" [ngClass]="{'form-control' : true , 'border-danger' : signupForm.get('password')?.invalid && signupForm.get('password')?.touched}" for="password" type="password" formControlName="password" placeholder="" required="">
+
+                    <div class="text-danger" *ngIf="signupForm.get('password')?.invalid && signupForm.get('password')?.touched">
+                        Password is required.
+                    </div>
+                    <label for="floatingTextarea" style="background: transparent;" >Password</label>
+                </div>
+
+                <div *ngIf="!isedit">
+
+                    <div class="text-danger" *ngIf="signupForm.get('profilePicture')?.invalid && signupForm.get('profilePicture')?.touched">
+                        Profile Picture is required.
+                    </div>
+                </div>
+
+
+                <a *ngIf="!isedit" routerLink="/auth">Already have an account</a>
+
+                <button *ngIf="!isedit" class="button-primary" type="submit">Register</button>
+                <button *ngIf="isedit" class="button-primary" type="button" (click)="onupdate()">Update</button>
+            </form>
+        </div>
+    </div>
+</div>

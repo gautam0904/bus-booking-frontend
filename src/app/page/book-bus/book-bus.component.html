@@ -1,0 +1,16 @@
+
+<div class="bus-layout mx-auto">
+  <div class="bus-row seat justify-content-end"><img style="width: 50px; height: 50px; padding-right: 10px;" src="../../../assets/steering-wheel-14.png" alt=""></div>
+  <div class="bus-row" *ngFor="let row of seatsInRows; let rowIndex = index">
+    <div  *ngFor="let seat of row " [ngClass]="{'seat': !isSeatBooked(seat),'seat-booked': isSeatBooked(seat) , 'gallary': ((seat% seatsPerRow) == 2) }" (click)="toggleSeat(seat)">
+
+        <button class='btn seat-button' [style.cursor]="isSeatBooked(seat) ? 'not-allowed' : 'pointer'"> {{ seat }}</button>
+
+
+    </div>
+  </div>
+  </div>
+
+  
+
+

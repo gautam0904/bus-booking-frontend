@@ -1,0 +1,26 @@
+.app-container {
+    display: flex;
+    height: 100vh;
+    flex-direction: column;
+  }
+
+.content{
+  overflow-y: scroll;
+  padding-top: 120px;
+}
+
+.content::-webkit-scrollbar {
+  display: none;
+}
+
+
+.content {
+  -ms-overflow-style: none;  
+  scrollbar-width: none;  
+}
+
+@media (max-width: 768px) {
+  .content{
+    padding-top: 0px;
+  }
+}

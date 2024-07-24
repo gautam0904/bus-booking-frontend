@@ -1,0 +1,28 @@
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 20px;
+}
+
+.signup-form{
+  width: 50%;
+}
+
+.form-select{
+  background-color:  rgba(255, 255, 255, 0.07) !important;
+}
+
+.form-floating>.form-control-plaintext~label::after, .form-floating>.form-control:focus~label::after, .form-floating>.form-control:not(:placeholder-shown)~label::after, .form-floating>.form-select~label::after {
+  background-color : transparent !important;
+}
+
+.card{
+  --bs-card-border-width: unset;
+}
+@media (max-width: 768px) {
+  .signup-form{
+      width: 100%;
+    }
+}

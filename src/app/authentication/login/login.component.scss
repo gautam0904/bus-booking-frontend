@@ -1,0 +1,25 @@
+
+.full-height {
+    height: 100vh;
+  }
+  
+  .form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 20px;
+  }
+  
+  .form-floating>.form-control-plaintext~label::after, .form-floating>.form-control:focus~label::after, .form-floating>.form-control:not(:placeholder-shown)~label::after, .form-floating>.form-select~label::after {
+    background-color : transparent !important;
+  }
+
+  .card{
+  --bs-card-border-width: unset;
+  }
+  
+  @media (max-width: 768px) {
+  .login-form{
+      width: 100%;
+    }
+  }

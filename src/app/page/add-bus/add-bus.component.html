@@ -1,0 +1,116 @@
+<app-loading *ngIf="loading"></app-loading>
+<div *ngIf="!loading" class="container full-height d-flex justify-content-center align-items-center">
+  <div class="signup-form">
+    <div>
+      <form [formGroup]="busForm" (ngSubmit)="onSubmit()">
+        <button *ngIf="isedit" type="button" class="ms-auto mt-3 border-0 rounded bg-transparent" routerLink="/" (click)="this.busForm.reset(); isedit=false"><i class="pi pi-times"></i></button>
+
+        <label class="fs-1 fw-1" for="chk" aria-hidden="true" *ngIf="!isedit">Add Bus</label>
+        <label class="fs-3 fw-1" style="margin-top: 0;" aria-hidden="true" *ngIf="isedit">Edit Bus</label>
+
+        <div class="form-floating">
+          <input [ngClass]="{'form-control':true , 'border-danger': busForm.get('departure')?.invalid && busForm.get('busNumber')?.touched}" for="busNumber" type="text" formControlName="busNumber" placeholder="" required="">
+
+          <div class="text-danger" *ngIf="busForm.get('busNumber')?.hasError('pattern') && busForm.get('busNumber')?.touched">
+              Bus Number proper formet like GJ 17 PD 2424.
+          </div>
+          <div class="text-danger" *ngIf="busForm.get('busNumber')?.hasError('required') && busForm.get('busNumber')?.touched">
+            Bus Number is required.
+          </div>
+
+          <label for="floatingTextarea">Bus busNumber</label>
+        </div>
+
+        <div class="form-floating">
+          <input [ngClass]="{'form-control':true , 'border-danger': busForm.get('departure')?.invalid && busForm.get('departure')?.touched}" for="departure" type="text" formControlName="departure" placeholder="" required="">
+
+          <div class="text-danger" *ngIf="busForm.get('departure')?.invalid && busForm.get('departure')?.touched">
+            departure is required .
+          </div>
+
+          <label for="floatingTextarea">Bus departure</label>
+        </div>
+
+        <div class="form-floating">
+          <input *ngIf="!isedit" [ngClass]="{'form-control': true , 'border-danger' : busForm.get('departureTime')?.invalid && busForm.get('departureTime')?.touched}" for="departureTime" type="time" formControlName="departureTime" required="">
+
+          <div class="text-danger" *ngIf="busForm.get('departureTime')?.invalid && busForm.get('departureTime')?.touched">
+            departureTime is required.
+          </div>
+
+          <label for="floatingTextarea">Departure Time</label>
+        </div>
+
+        <div class="form-floating">
+          <input [ngClass]="{'form-control' : true , 'border-danger' : busForm.get('TotalSeat')?.invalid && busForm.get('TotalSeat')?.touched}" for="TotalSeat" type="number" formControlName="TotalSeat" placeholder="" required="">
+
+          <div class="text-danger" *ngIf="busForm.get('TotalSeat')?.hasError('seatRange') && busForm.get('TotalSeat')?.touched">
+            Total Seat of bus should be minimum 0 and maximum 50.
+        </div>
+        <div class="text-danger" *ngIf="busForm.get('TotalSeat')?.hasError('required') && busForm.get('TotalSeat')?.touched">
+          Total Seat of bus is required.
+        </div>
+
+          <label for="floatingTextarea">Bus TotalSeat</label>
+        </div>
+
+        <div class="form-floating">
+          <input [ngClass]="{
+            'form-control': true,
+            'border-danger': busForm.get('charge')?.invalid && busForm.get('charge')?.touched
+          }" id="charge" type="number" formControlName="charge" placeholder="" required />
+
+          <div class="text-danger" *ngIf="busForm.get('charge')?.invalid && busForm.get('charge')?.touched">
+            Charge is required.
+          </div>
+
+          <label for="floatingTextarea">Bus charge  &#x20b9; / km </label>
+        </div>
+
+        <div formArrayName="route">
+          <div *ngFor="let fieldGroup of routeArray.controls; let i = index" [formGroupName]="i">
+            <div class="form-floating">
+              <input [ngClass]="{'form-control': true, 'border-danger': fieldGroup.get('previousStation')?.invalid && fieldGroup.get('previousStation')?.touched}" formControlName="previousStation" type="text" placeholder="">
+
+              <div class="text-danger" *ngIf="fieldGroup.get('previousStation')?.invalid && fieldGroup.get('previousStation')?.touched">
+                Previous Station is required.
+              </div>
+
+              <label for="floatingTextarea">Bus Previous Station</label>
+            </div>
+
+            <div class="form-floating">
+              <input [ngClass]="{'form-control': true, 'border-danger': fieldGroup.get('currentStation')?.invalid && fieldGroup.get('currentStation')?.touched}" formControlName="currentStation" type="text" placeholder="" required>
+
+              <div class="text-danger" *ngIf="fieldGroup.get('currentStation')?.invalid && fieldGroup.get('currentStation')?.touched">
+                Current Station is required.
+              </div>
+
+              <label for="floatingTextarea">Bus Current Station</label>
+            </div>
+
+            <div class="form-floating">
+              <input [ngClass]="{'form-control': true, 'border-danger': fieldGroup.get('distance')?.invalid && fieldGroup.get('distance')?.touched}" formControlName="distance" type="number" placeholder="" required>
+
+              <div class="text-danger" *ngIf="fieldGroup.get('distance')?.invalid && fieldGroup.get('distance')?.touched">
+                Distance is required.
+              </div>
+
+              <label for="floatingTextarea">Bus Distance</label>
+            </div>
+
+            <button type="button" class="btn btn-danger" (click)="deleteRoute(i)" *ngIf="routeArray.length > 1">Delete</button>
+          </div>
+        </div>
+
+        <button type="button" class="btn btn-primary my-1" (click)="addRoute()">Add Field</button>
+        <div class="text-danger" *ngIf="!routeValid">
+          you need to add atleastone route of bus
+        </div>
+
+        <button class="button-primary" type="submit"><i *ngIf="!isedit">Add Bus</i><i *ngIf="isedit">Update</i></button>
+
+      </form>
+    </div>
+  </div>
+</div>
