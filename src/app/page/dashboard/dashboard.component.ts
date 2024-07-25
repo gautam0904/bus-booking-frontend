@@ -74,6 +74,12 @@ export class DashboardComponent implements OnInit {
       })
       this.searchBusForm.get('seat')?.disable()
     }
+    else {
+      this.searchBusForm.patchValue({
+        seat: ""
+      })
+      this.searchBusForm.get('seat')?.enable()
+    }
   }
 
   ondelete(bus: Ibus) {
@@ -128,8 +134,8 @@ export class DashboardComponent implements OnInit {
   onSubmit() {
 
     this.searching = true;
-    if (this.searchBusForm.get('departure')?.valid && this.searchBusForm.get('destination')?.valid && this.searchBusForm.get('bookingDate')?.valid && this.searchBusForm.get('seat')?.valid) {
-
+    
+    if (this.searchBusForm.get('departure')?.valid && this.searchBusForm.get('destination')?.valid && this.searchBusForm.get('bookingDate')?.valid) {
       this.sharedService.setbookUserData({  
         seat : this.searchBusForm.get('seat')?.value,
         isSingleLady : this.searchBusForm.get('isSingleLady')?.value,
@@ -158,7 +164,7 @@ export class DashboardComponent implements OnInit {
             }
           })
         );
-      }, 2000);
+      }, 1000);
     }
     else {
       Object.values(this.searchBusForm.controls).forEach(control => {

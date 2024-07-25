@@ -95,9 +95,7 @@ export class AddBusComponent {
           previousStation: this.busForm.value.departure
         });
        
-      } else {
-        console.log(this.busForm.value.route[this.routeArray.length - 2]);
-        
+      } else {        
         this.routeArray.at(this.routeArray.length - 1).patchValue({
           previousStation: this.busForm.value.route[this.routeArray.length - 2].currentStation
         });

@@ -1,13 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { BusService } from 'src/app/core/services/bus.service';
 import { BookingService } from 'src/app/core/services/booking.service';
 import { SharedService } from 'src/app/core/services/shared.service';
 import { Ibus } from 'src/app/core/interfaces/ibus';
 import { IseatgetApiResponse } from 'src/app/core/interfaces/iseatget-api-response';
-import { IbookingSeatgetApiResponse } from 'src/app/core/interfaces/ibooking-seatget-api-response';
-import { IbusgetApiResponse } from 'src/app/core/interfaces/ibusget-api-response';
+import { IBookUser } from 'src/app/core/interfaces/i-book-user';
 
 @Component({
   selector: 'app-book-bus',
@@ -16,13 +13,15 @@ import { IbusgetApiResponse } from 'src/app/core/interfaces/ibusget-api-response
 })
 export class BookBusComponent implements OnInit {
   seats: number[] = [];
+  ladyBookedSeats: number[] = [];
   seatsInRows: number[][] = [];
   seatsPerRow!: number;
   bookedbus: Ibus | undefined = undefined;
   bus: Ibus | undefined = undefined;
   loading: boolean = false;
   selectedOption: string = '';
-  bookedSeats: Set<number> = new Set<number>();
+  bookedSeats: any[] = [];
+  bookUser : IBookUser | undefined = undefined;
 
 
   constructor(
@@ -34,6 +33,10 @@ export class BookBusComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.sharedService.bookUser$.subscribe(bookUser => {
+      this.bookUser = bookUser;
+    }
+    )
     this.sharedService.bookBus$.subscribe(bus => {
       this.bookedbus = bus;
       if (!this.bookedbus) {
@@ -41,26 +44,31 @@ export class BookBusComponent implements OnInit {
       }
       this.seats = Array.from({ length: this.bookedbus?.TotalSeat || 20 }, (_, index) => (index + 1));
       this.seatsPerRow = 4;
+           
       const totalSeats = this.seats.length;
       this.seatsInRows = [];
+
       for (let i = 0; i < totalSeats; i += this.seatsPerRow) {
         const rowSeats = this.seats.slice(i, i + this.seatsPerRow);
         this.seatsInRows.push(rowSeats);
       }
-
+      
       this.fetchBookedSeats(bus as Ibus);
     });
   }
 
   fetchBookedSeats(bus: Ibus): void {
     this.bookingService.bookedseat(bus).subscribe({
-      next: (resdata: IseatgetApiResponse) => {
+      next: (resdata: IseatgetApiResponse) => {        
         if (resdata.data instanceof Array) {
           resdata.data.forEach((bookedseat: any) => {
-            this.bookedSeats.add(bookedseat.seatNumber);
+            this.bookedSeats.push(bookedseat);
+            console.log(this.bookedSeats.find(seat => seat.isSingleLady == true));
+            
+            // this.ladyBookedSeats.push((this.bookedSeats.find(seat => seat.isSingleLady === true)).seatNumber);
           });
         } else {
-          this.bookedSeats.add(resdata.data);
+          this.bookedSeats.push(resdata.data);
         }
       },
     });
@@ -75,9 +83,22 @@ export class BookBusComponent implements OnInit {
   }
 
 
-  isSeatBooked(seat: number): boolean {    
-    return this.bookedSeats.has(seat);
+  isSeatBooked(seat: number): boolean { 
+    return this.bookedSeats.some((s : {seatNumber : number}) => s.seatNumber === seat);
   }
+   getIsSingleLadyStatus(seatNumber : number) {
+    const seat = this.bookedSeats.find(seat => seat.seatNumber === seatNumber);
+   
+    return seat ? seat.isSingleLady : undefined;
+}
+disabledSeat(seat : number){
+
+  let disabledSeat = false;
+  if (!this.bookUser?.isSingleLady) {
+    this.ladyBookedSeats.includes(seat-1) || this.ladyBookedSeats.includes(seat-1)
+  }
+  return disabledSeat;
+}
 }
 
 

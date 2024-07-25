@@ -51,9 +51,7 @@
             <option class="bg-dark" value="5">Five</option>
             <option class="bg-dark" value="6">Six</option>
           </select>
-
-          <label for="floatingTextarea">Bus Seat</label>
-
+          <label for="floatingTextarea">Number of Seat </label>
           <div class="text-danger" *ngIf="searchBusForm.get('seat')?.invalid && searchBusForm.get('seat')?.touched">
             Bus Seat is required.
           </div>

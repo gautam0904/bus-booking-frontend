@@ -111,7 +111,17 @@ export class BookBusFormComponent implements OnInit {
 
 
   onSubmit(): void {
-    if (this.bookingForm.valid) {
+    if (
+      this.bookingForm.controls['busId'].valid && 
+      this.bookingForm.controls['seatNumber'].valid && 
+      this.bookingForm.controls['departure'].valid && 
+      this.bookingForm.controls['destination'].valid && 
+      this.bookingForm.controls['departureTime'].valid && 
+      this.bookingForm.controls['payment'].valid && 
+      this.bookingForm.controls['bookingDate'].valid && 
+      this.bookingForm.controls['seat'].valid && 
+      this.bookingForm.controls['paymentMethod'].valid 
+    ){
       this.loading = true;
       this.selectedSeat = undefined;
       setTimeout(() => {

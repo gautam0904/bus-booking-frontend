@@ -43,7 +43,6 @@ export class BookingService {
 
 
   getbookseat(seatdata: IbookingSeat): Observable<IbookingSeatgetApiResponse> {
-    console.log(seatdata);
     
     return this.http.post<IbookingSeatgetApiResponse>('/bus/book/', seatdata).pipe(
 
