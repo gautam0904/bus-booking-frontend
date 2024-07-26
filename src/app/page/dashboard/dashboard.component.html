@@ -32,7 +32,7 @@
         </div>
 
         <div class="form-floating">
-          <input [ngClass]="{'form-control' : true , 'border-danger' : searchBusForm.get('bookingDate')?.invalid && searchBusForm.get('bookingDate')?.touched}" for="bookingDate" type="date" formControlName="bookingDate" placeholder="" required="">
+          <input [ngClass]="{'form-control' : true , 'border-danger' : searchBusForm.get('bookingDate')?.invalid && searchBusForm.get('bookingDate')?.touched}" for="bookingDate" type="date" formControlName="bookingDate" placeholder="" required="" [attr.min]="minDate">
 
           <div class="text-danger" *ngIf="searchBusForm.get('bookingDate')?.invalid && searchBusForm.get('bookingDate')?.touched">
             booking Date is required.
@@ -73,7 +73,6 @@
 </div>
 
 
-
 <div *ngIf="!loading" class="d-flex flex-wrap gap-3 mt-5 container">
   <div class="card post p-3" *ngFor="let b of buses">
     <div>
@@ -100,9 +99,113 @@
         <a *ngIf="role === 'admin'" (click)="onbusUpdate(b)"><button class="btn-lg btn button"> <i class="text-primary fa-solid fa-2x fa-pen-to-square"></i> </button></a>
         <button *ngIf="role === 'admin'" class="text-danger btn" (click)="ondelete(b)"><i class="fa-regular fa-trash-can fa-2x"></i></button>
         <button *ngIf="searching" (click)="bookBus(b)" class="btn"><img style="width: 60px; " class="img-fluid" src="../../../assets/Ecostyle_leather_seats.png" alt=""></button>
+        <button type="button" class="btn" (click)="selectBus(b)" data-bs-toggle="modal" data-bs-target="#exampleModal"><i class="fa-solid fa-route fa-2x"></i></button>
       </div>
     </div>
-
   </div>
+</div>
 
+<!-- Modal for displaying bus route -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Bus Route</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="route-container">
+          <mat-card *ngIf="selectedBus">
+            <mat-card-header>
+              <mat-card-title>Bus Route for {{ selectedBus.busNumber }}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="route-details">
+
+                <mat-list>
+                  <mat-list-item class="item d-flex justify-content-center align-items-center">
+                    <div class="item-content d-flex">
+                      <div >
+                     
+                      </div>
+                      <div class="info">
+                        <div class="title">
+                          <div matLine>
+                            <span>Station</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="title">
+                        <div matLine >
+                          <span class="me-1">Arrival Time </span>
+                          <span>Distance</span>
+                        </div>
+                      </div>
+                    </div>
+
+                  </mat-list-item>
+                  
+                </mat-list>
+
+                <mat-list>
+                  <mat-list-item class="item d-flex justify-content-center align-items-center">
+                    <div class="item-content d-flex">
+                      <div class="circle ontime">
+                        <mat-icon matListItemIcon></mat-icon>
+                      </div>
+                      <div class="info">
+                        <div class="title">
+                          <div matLine>
+                            <span>{{ selectedBus.departure }}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="time">
+                        <div matLine >
+                          <span class="me-1">{{ selectedBus.departureTime }}</span>
+                          <span>{{ 0 | number}}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                  </mat-list-item>
+                  
+                </mat-list>
+
+                <mat-list>
+                  <mat-list-item class="item d-flex justify-content-center align-items-center" *ngFor="let station of selectedBus.route">
+                    <div class="item-content d-flex">
+                      <div class="circle ontime">
+                        <mat-icon matListItemIcon></mat-icon>
+                      </div>
+                      <div class="info">
+                        <div class="title">
+                          <div matLine>
+                            <span>{{ station.currentStation }}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="time">
+                        <div matLine >
+                          <span class="me-1">{{ station.arrivalTime }}</span>
+                          <span>{{ station.distance | number }}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                  </mat-list-item>
+                  
+                </mat-list>
+                
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
 </div>

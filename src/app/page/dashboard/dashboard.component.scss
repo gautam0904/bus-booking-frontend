@@ -18,11 +18,57 @@
   background-color : transparent !important;
 }
 
+
+.item {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.item:last-child {
+  border-bottom: none;
+}
+
+.item-content.d-flex {
+  display: flex;
+  flex-grow: 1;
+  justify-content: space-between; /* Distribute items evenly */
+}
+
+.circle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #ccc;
+  margin-right: 15px;
+}
+
+.circle.ontime {
+  background-color: #4CAF50;
+}
+
+.info {
+  flex: 1;
+}
+
+.title {
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+.time {
+  font-size: 14px;
+  color: #666;
+}
+
 .card{
   --bs-card-border-width: unset;
 }
 @media (max-width: 768px) {
-  .signup-form{
+  .signup-form , .post{
       width: 100%;
     }
+
 }

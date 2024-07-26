@@ -5,8 +5,9 @@
   }
 
 .content{
+  position: absolute;
+  top: 120px ;
   overflow-y: scroll;
-  padding-top: 120px;
 }
 
 .content::-webkit-scrollbar {

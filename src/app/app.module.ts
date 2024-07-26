@@ -9,11 +9,13 @@ import { LayoutModule } from './layout/layout.module';
 import { BaseURLInterceptor } from './core/interceptors/base-url.interceptor';
 import { ErrorInterceptor } from './core/interceptors/error.interceptor';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { DistancePipe } from './distance.pipe';
 
 @NgModule({
   declarations: [
     AppComponent,
-    
+    DistancePipe,    
   ],
   imports: [
     BrowserModule,
@@ -21,6 +23,7 @@ import { AuthInterceptor } from './core/interceptors/auth.interceptor';
     ReactiveFormsModule,
     HttpClientModule,
     LayoutModule,
+    BrowserAnimationsModule,
   ],
   providers: [
     {

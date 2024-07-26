@@ -37,9 +37,6 @@ form h3 {
 }
 
 input {
-  display: block;
-  height: 50px;
-  width: 100%;
   background-color: rgba(255, 255, 255, 0.07) !important;
   border-radius: 3px;
   padding: 0 10px;
@@ -82,3 +79,5 @@ input {
     width: 100%;
   }
 }
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

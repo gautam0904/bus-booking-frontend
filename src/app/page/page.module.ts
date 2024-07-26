@@ -8,7 +8,11 @@ import { SharedModule } from '../shared/shared.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BookBusComponent } from './book-bus/book-bus.component';
 import { BookBusFormComponent } from './book-bus-form/book-bus-form.component';
-
+import { MatCardModule } from '@angular/material/card';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatListModule } from '@angular/material/list';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [
@@ -22,7 +26,12 @@ import { BookBusFormComponent } from './book-bus-form/book-bus-form.component';
     PageRoutingModule,
     SharedModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    MatCardModule,
+    MatToolbarModule,
+    MatDividerModule,
+    MatListModule,
+    MatIconModule
   ]
 })
 export class PageModule { }

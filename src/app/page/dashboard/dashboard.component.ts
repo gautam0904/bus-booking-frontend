@@ -22,7 +22,9 @@ export class DashboardComponent implements OnInit {
   searchBusForm!: FormGroup;
   buses: Ibus[] = [];
   cloneBus: Ibus | undefined;
+  minDate!: string;
   loading: boolean = false;
+  selectedBus!: Ibus;
   private subscription: Subscription = new Subscription();
 
   constructor(
@@ -42,6 +44,8 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const today = new Date();
+    this.minDate = today.toISOString().split('T')[0];
     this.busService.getAll().subscribe({
       next: (resdata: IbusgetApiResponse) => {
         this.loading = false;
@@ -131,6 +135,10 @@ export class DashboardComponent implements OnInit {
     }
   }
 
+  selectBus(bus: Ibus) {
+    this.selectedBus = bus;
+  }
+
   onSubmit() {
 
     this.searching = true;
@@ -145,7 +153,7 @@ export class DashboardComponent implements OnInit {
       this.loading = true;
       this.showform = false;
       this.searching = true;
-      setTimeout(() => {
+
         const submitObservable = this.busService.getBusbyFilter(this.searchBusForm.value);
 
         this.subscription.add(
@@ -164,7 +172,7 @@ export class DashboardComponent implements OnInit {
             }
           })
         );
-      }, 1000);
+      
     }
     else {
       Object.values(this.searchBusForm.controls).forEach(control => {

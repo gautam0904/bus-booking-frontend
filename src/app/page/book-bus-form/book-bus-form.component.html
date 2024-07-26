@@ -1,92 +1,93 @@
 <app-loading *ngIf="loading"></app-loading>
 <div *ngIf="!loading" class="container full-height d-flex justify-content-center align-items-center">
   <div class="signup-form">
-    
+
     <div>
       <form [formGroup]="bookingForm" (ngSubmit)="onSubmit()">
         <div class="d-flex justify-content-end">
           <button type="button" class="mt-3 border-0 rounded bg-transparent" routerLink="/bus-book" (click)="this.bookingForm.reset();"><i class="pi pi-times"></i></button>
         </div>
+        <div class="d-flex align-items-center">
+          <h2>Book Seat : </h2>
+          <i *ngFor="let s of seats" class="fw-3 mx-1">{{s}} , </i>
+        </div>
 
-        <h2>Book Seat {{ selectedSeat }}</h2>
+        <div class="row">
+          <div class="col-lg-6">
+            Bus departure : {{bookingForm.get('departure')?.value}}
+          </div>
+          <div class="col-lg-6">
+            Bus destination : {{bookingForm.get('destination')?.value}}
+          </div>
+        </div>
 
+        <div class="row">
+          <div class="col-lg-6">
+            BookingDate  : {{bookingForm.get('bookingDate')?.value}}
+          </div>
+          <div class="col-lg-6">
+            departureTime : {{bookingForm.get('departureTime')?.value}}
+          </div>
+        </div>
+        
         <div class="form-floating">
+          <input [ngClass]="{'form-control':true , 'border-danger': bookingForm.get('mobileNo')?.invalid && bookingForm.get('mobileNo')?.touched}" for="mobileNo" type="text" formControlName="mobileNo" placeholder="" required="">
 
-          <input id="departure" class="form-control" type="text" formControlName="departure" placeholder="Bus departure" required [disabled]="true">
-
-          <div class="text-danger" *ngIf="bookingForm.get('departure')?.invalid && bookingForm.get('departure')?.touched">
-            Departure is required.
+          <div class="text-danger" *ngIf="bookingForm.get('mobileNo')?.invalid && bookingForm.get('mobileNo')?.touched">
+          User's Correct mobile Number is required.
           </div>
 
-          <label for="floatingTextarea">Bus departure</label>
+          <label for="floatingTextarea">Bus busNumber</label>
         </div>
 
-        <div class="form-floating">
+        <div formArrayName="passenger">
+          <div *ngFor="let fieldGroup of passengerArray.controls; let i = index" [formGroupName]="i">
+            <div class="form-floating">
+              <input [ngClass]="{'form-control': true, 'border-danger': fieldGroup.get('name')?.invalid && fieldGroup.get('name')?.touched}" formControlName="name" type="text" placeholder="">
 
-          <input id="destination" class="form-control" type="text" formControlName="destination" placeholder="" required [disabled]="true">
-          <div class="text-danger" *ngIf="bookingForm.get('destination')?.invalid && bookingForm.get('destination')?.touched">
-            Destination is required.
-          </div>
-          <label for="floatingTextarea">Bus destination</label>
-        </div>
+              <div class="text-danger" *ngIf="fieldGroup.get('name')?.invalid && fieldGroup.get('name')?.touched">
+                User Name is required.
+              </div>
 
-        <div class="form-floating">
-          <input id="departureTime" class="form-control" type="text" formControlName="departureTime" placeholder="" required [disabled]="true">
-          <div class="text-danger" *ngIf="bookingForm.get('departureTime')?.invalid && bookingForm.get('departureTime')?.touched">
-            Departure Time is required.
-          </div>
-          <label for="floatingTextarea">Bus departureTime</label>
-        </div>
+              <label for="floatingTextarea">Name</label>
+            </div>
 
-        <div class="form-floating">
-          <input [ngClass]="{'form-control' : true , 'border-danger' : bookingForm.get('bookingDate')?.invalid && bookingForm.get('bookingDate')?.touched}" for="bookingDate" type="date" formControlName="bookingDate" placeholder="" required="">
+            <div class="form-floating">
+              <input [ngClass]="{'form-control': true, 'border-danger': fieldGroup.get('age')?.invalid && fieldGroup.get('age')?.touched}" formControlName="age" type="number" placeholder="" required>
 
-          <div class="text-danger" *ngIf="bookingForm.get('bookingDate')?.invalid && bookingForm.get('bookingDate')?.touched">
-            booking Date is required.
-          </div>
+              <div class="text-danger" *ngIf="fieldGroup.get('age')?.invalid && fieldGroup.get('age')?.touched">
+                User Age is required.
+              </div>
 
-          <label for="floatingTextarea">Bus booking Date</label>
-        </div>
+              <label for="floatingTextarea">Age</label>
+            </div>
 
-        <div class="form-floating my-2">
-
-          <select class="form-select seatNumber" aria-label="Default select example" formControlName="seat" placeholder="">
-            <option class="bg-dark" value="1">One</option>
-            <option class="bg-dark" value="2">Two</option>
-            <option class="bg-dark" value="3">Three</option>
-            <option class="bg-dark" value="4">Four</option>
-            <option class="bg-dark" value="5">Five</option>
-            <option class="bg-dark" value="6">Six</option>
-          </select>
-
-          <label for="floatingTextarea">Number of Seat</label>
-
-          <div class="text-danger" *ngIf="bookingForm.get('seat')?.invalid && bookingForm.get('seat')?.touched">
-            Bus Seat is required.
+            <div class="radio-inline">
+              <label>
+                <input [ngClass]="{ 'mx-2':true, 'border-danger': fieldGroup.get('gender')?.invalid && fieldGroup.get('gender')?.touched}"  type="radio" value="Male" formControlName="gender">
+                  <span>male</span>
+              </label>
+              <label>
+                <input [ngClass]="{ 'mx-2':true,'border-danger': fieldGroup.get('gender')?.invalid && fieldGroup.get('gender')?.touched}"  type="radio" value="Female" formControlName="gender">
+                  <span>female</span>
+              </label>
+              <div class="text-danger" *ngIf="fieldGroup.get('gender')?.invalid && fieldGroup.get('gender')?.touched">
+                Gender is required.
+              </div>
+            </div>
+            
           </div>
         </div>
 
-        <div class="form-floating my-4">
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" formControlName="isSingleLady" required="">
-            <label class="form-check-label mx-2 my-1" for="flexCheckIndeterminate">
-              Single Lady
-            </label>
-          </div>
-        </div>
+       
 
-        <div class="form-floating">
-          <input id="payment" class="form-control" type="payment" formControlName="payment" placeholder="" required [disabled]="true">
-          <div class="text-danger" *ngIf="bookingForm.get('payment')?.invalid && bookingForm.get('payment')?.touched">
-            Bus Payment is required.
-          </div>
-
-          <label for="floatingTextarea">Payment</label>
+        <div class="row">
+          <div class="col-lg-6">Payment : {{bookingForm.get('payment')?.value}}</div>
         </div>
 
         <div class="form-group">
           <label for="payment">Payment Method</label>
-          <select id="payment1" class="form-control text-dark" formControlName="paymentMethod" required [disabled]="true">
+          <select id="payment1" class="form-control text-dark" (change)="pamentMethod($event)" formControlName="paymentMethod" required >
             <option value="">Select payment method</option>
             <option class="text-dark" value="upi">Payment by UPI</option>
             <option class="text-dark" value="card">Payment by Card</option>

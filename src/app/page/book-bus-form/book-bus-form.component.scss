@@ -1,27 +1,32 @@
 .full-height {
-    height: 100vh;
+  height: 100vh;
 }
 
 .form {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px;
 }
 
-.signup-form{
-  width: 50%;
+.signup-form {
+  position: absolute;
+  top: 0;
 }
 
-.form-floating>.form-control-plaintext~label::after, .form-floating>.form-control:focus~label::after, .form-floating>.form-control:not(:placeholder-shown)~label::after, .form-floating>.form-select~label::after {
-  background-color : transparent !important;
+.form-floating>.form-control-plaintext~label::after,
+.form-floating>.form-control:focus~label::after,
+.form-floating>.form-control:not(:placeholder-shown)~label::after,
+.form-floating>.form-select~label::after {
+  background-color: transparent !important;
 }
 
-.card{
+.card {
   --bs-card-border-width: unset;
 }
+
 @media (max-width: 768px) {
-  .signup-form{
-      width: 100%;
-    }
+  .signup-form {
+    width: 100%;
+  }
 }

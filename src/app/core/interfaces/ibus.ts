@@ -10,5 +10,6 @@ export interface Ibus {
      previousStation : string;
      currentStation : string;
      distance : number;
+     arrivalTime : string;
     }]
 }

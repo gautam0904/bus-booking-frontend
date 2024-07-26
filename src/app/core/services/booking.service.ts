@@ -15,7 +15,7 @@ export class BookingService {
 
   constructor(private http: HttpClient, private router: Router) { }
 
-  bookedseat(busdata: Ibus): Observable<IseatgetApiResponse> {
+  bookedseat(busdata: Ibus , date : Date): Observable<IseatgetApiResponse> {
 
     if (!busdata) {
       throw Error;
@@ -24,7 +24,8 @@ export class BookingService {
     return this.http.post<IseatgetApiResponse>(`/bus/bookedSeat/`, {
       departure: busdata.departure,
       destination: busdata.destination,
-      busId: busdata._id || ''
+      busId: busdata._id || '',
+      date : date
     }).pipe(
 
       catchError((error) => {

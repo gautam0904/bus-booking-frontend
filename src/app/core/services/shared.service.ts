@@ -21,10 +21,10 @@ export class SharedService {
   private bus = new BehaviorSubject<Ibus | undefined>(undefined);
   bus$ = this.bus.asObservable();
   
-  private seat = new BehaviorSubject<number | undefined>(undefined);
+  private seat = new BehaviorSubject<number[] | undefined>(undefined);
   seat$ = this.seat.asObservable();
 
-  setseatData(value: number) {
+  setseatData(value: number[]) {
     this.seat.next(value);
   }
 

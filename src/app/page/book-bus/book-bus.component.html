@@ -1,13 +1,17 @@
-
 <div class="bus-layout mx-auto">
   <div class="bus-row seat justify-content-end"><img style="width: 50px; height: 50px; padding-right: 10px;" src="../../../assets/steering-wheel-14.png" alt=""></div>
-  <div class="bus-row" *ngFor="let row of seatsInRows; let rowIndex = index">
-    <div  *ngFor="let seat of row " [ngClass]="{'seat': !isSeatBooked(seat),'seat-booked': isSeatBooked(seat) , 'gallary': ((seat% seatsPerRow) == 2) , 'singleLadySeat': getIsSingleLadyStatus(seat)}" >
-        <button class='btn seat-button' [style.cursor]="isSeatBooked(seat) ? 'not-allowed' : 'pointer'" (click)="toggleSeat(seat)" [disabled]="isSeatBooked(seat) || disabledSeat(seat)"> {{ seat }}</button>
+  <div class="bus-row" *ngFor="let row of seatsInRows; let rowIndex = index; trackBy: trackByIndex">
+    <div *ngFor="let seat of row; trackBy: trackBySeat" [ngClass]="{
+      'seat': !isSeatBooked(seat),
+      'seat-booked': isSeatBooked(seat) ,
+      'gallary': ((seat% seatsPerRow) == 2) ,
+      'singleLadySeat': getIsSingleLadyStatus(seat) , 
+      'selectedSeat' : isselectedSeat(seat),
+      'disabledSeat' : seatStatus[seat].isDisabled
+     }">
+      <button class='btn seat-button' [style.cursor]="seatStatus[seat].isBooked || seatStatus[seat].isDisabled ? 'not-allowed' : 'pointer'" (click)="toggleSeat(seat)" [disabled]="seatStatus[seat].isBooked || seatStatus[seat].isDisabled">
+        {{ seat }}
+      </button>
     </div>
   </div>
-  </div>
-
-  
-
-
+</div>

@@ -22,7 +22,9 @@ export class BookBusComponent implements OnInit {
   selectedOption: string = '';
   bookedSeats: any[] = [];
   bookUser : IBookUser | undefined = undefined;
+  selectedSeats : number[] = [];
 
+  seatStatus: { [key: number]: { isBooked: boolean, isDisabled: boolean } } = {};
 
   constructor(
     private bookingService: BookingService,
@@ -33,6 +35,7 @@ export class BookBusComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loading = true;
     this.sharedService.bookUser$.subscribe(bookUser => {
       this.bookUser = bookUser;
     }
@@ -52,214 +55,91 @@ export class BookBusComponent implements OnInit {
         const rowSeats = this.seats.slice(i, i + this.seatsPerRow);
         this.seatsInRows.push(rowSeats);
       }
+
+      this.seats.forEach(seat => {
+        this.seatStatus[seat] = { isBooked: this.isSeatBooked(seat), isDisabled: this.disabledSeat(seat)  };
+      });
       
       this.fetchBookedSeats(bus as Ibus);
+      this.loading =false;
     });
   }
 
+
   fetchBookedSeats(bus: Ibus): void {
-    this.bookingService.bookedseat(bus).subscribe({
+    this.bookingService.bookedseat(bus , this.bookUser?.bookingDate || new Date()).subscribe({
       next: (resdata: IseatgetApiResponse) => {        
         if (resdata.data instanceof Array) {
           resdata.data.forEach((bookedseat: any) => {
             this.bookedSeats.push(bookedseat);
-            console.log(this.bookedSeats.find(seat => seat.isSingleLady == true));
-            
-            // this.ladyBookedSeats.push((this.bookedSeats.find(seat => seat.isSingleLady === true)).seatNumber);
+            const s = this.bookedSeats.find(seat => seat.isSingleLady == true);
+            if (s) {
+              this.ladyBookedSeats.push(s.seatNumber[0]);
+            }
           });
         } else {
           this.bookedSeats.push(resdata.data);
         }
+        this.updateSeatStatuses(); 
       },
     });
   }
 
+  updateSeatStatuses() {
+    this.seats.forEach(seat => {
+      this.seatStatus[seat] = {
+        isBooked: this.isSeatBooked(seat),
+        isDisabled: this.disabledSeat(seat)
+      };
+    });
+  }
+
+
+
   toggleSeat(seat: number): void {
-    this.sharedService.setseatData(seat)
-    if (this.bookedbus) {
-      this.sharedService.setBusData(this.bookedbus)
+    this.selectedSeats.push(seat);
+    if(this.selectedSeats.length == this.bookUser?.seat){
+      
+      this.sharedService.setseatData(this.selectedSeats)
+      if (this.bookedbus) {
+        this.sharedService.setBusData(this.bookedbus)
+      }
+      this.router.navigate(['/booked-bus-form'])
     }
-    this.router.navigate(['/booked-bus-form'])
+    
   }
 
 
   isSeatBooked(seat: number): boolean { 
-    return this.bookedSeats.some((s : {seatNumber : number}) => s.seatNumber === seat);
+    const isBooked = this.bookedSeats.some(s => s.seatNumber.includes(seat));
+    return isBooked;
+  }
+  
+
+  disabledSeat(seat: number): boolean {
+    let disabledSeat = false;
+    if (!this.bookUser?.isSingleLady) {
+      disabledSeat = this.ladyBookedSeats.includes(seat - 1) || this.ladyBookedSeats.includes(seat + 1);      
+    }
+    return disabledSeat;
+  }
+
+  trackByIndex(index: number): number {
+    return index;
+  }
+  
+  trackBySeat(index: number, seat: number): number {
+    return seat;
+  }
+  
+
+
+  isselectedSeat(seat : number){
+    return this.selectedSeats.includes(seat);
   }
    getIsSingleLadyStatus(seatNumber : number) {
-    const seat = this.bookedSeats.find(seat => seat.seatNumber === seatNumber);
-   
-    return seat ? seat.isSingleLady : undefined;
-}
-disabledSeat(seat : number){
-
-  let disabledSeat = false;
-  if (!this.bookUser?.isSingleLady) {
-    this.ladyBookedSeats.includes(seat-1) || this.ladyBookedSeats.includes(seat-1)
-  }
-  return disabledSeat;
-}
+    return this.ladyBookedSeats.includes(seatNumber)
 }
 
+}
 
-
-
-
-// import { BusService } from 'src/app/core/services/bus.service';
-// import { Component, OnInit } from '@angular/core';
-// import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-// import { IbookingSeatgetApiResponse } from 'src/app/core/interfaces/ibooking-seatget-api-response';
-// import { Ibus } from 'src/app/core/interfaces/ibus';
-// import { IseatgetApiResponse } from 'src/app/core/interfaces/iseatget-api-response';
-// import { BookingService } from 'src/app/core/services/booking.service';
-// import { SharedService } from 'src/app/core/services/shared.service';
-// import { Router } from '@angular/router';
-// import { IbusgetApiResponse } from 'src/app/core/interfaces/ibusget-api-response';
-
-// @Component({
-//   selector: 'app-book-bus',
-//   templateUrl: './book-bus.component.html',
-//   styleUrls: ['./book-bus.component.scss']
-// })
-// export class BookBusComponent implements OnInit {
-//   seats: number[] = [];
-//   lastRowSeats: number[] = [];
-//   selectedSeat: number | undefined = undefined;
-//   bookedbus: Ibus | undefined = undefined;
-//   bus: Ibus | undefined = undefined;
-//   bookingForm !: FormGroup;
-//   loading: boolean = false;
-//   selectedOption: string = '';
-
-//   options = [
-//     { id: 'option1', label: 'payment by upi' },
-//     { id: 'option2', label: 'payment by upi' },
-//   ];
-
-
-//   constructor(
-//     private bookingService: BookingService,
-//     private busService: BusService,
-//     private router: Router,
-//     private sharedService: SharedService,
-//     private fb: FormBuilder,
-//   ) {
-
-//   }
-
-
-//   ngOnInit(): void {
-//     this.sharedService.bookBus$.subscribe(bus => {
-//       this.bookedbus = bus
-//       this.seats = Array.from({ length: this.bookedbus?.TotalSeat || 20 }, (_, index) => (index + 1));
-//       const seatsPerRow = 5;
-//       const totalSeats = this.seats.length;
-//       const lastRowStartIndex = Math.floor((totalSeats - 1) / seatsPerRow) * seatsPerRow + 1;
-//       this.lastRowSeats = this.seats.slice(lastRowStartIndex - 1);
-//       this.bookingService.bookedseat(bus as Ibus).subscribe({
-//         next: (resdata: IseatgetApiResponse) => {
-
-//           if (resdata.data instanceof Array) {
-//             resdata.data.forEach((bookedseat: any) => {
-//               if (bookedseat.seatNumber) {
-//                 this.seats = this.seats.filter(p => p !== bookedseat.seatNumber);
-//               }
-//             })
-//           } else {
-//             this.seats = [resdata.data];
-//           }
-//         },
-//       })
-
-//     });
-
-//   }
-
-//   onChange(option: string) {
-//     this.selectedOption = option;
-//     if (this.selectedOption == 'option1') {
-//       this.bookingForm.patchValue({
-//         payment: this.bookingForm.get('payment')?.value + 26
-//       })
-//     }
-//     else if (this.selectedOption == 'option2') {
-//       this.bookingForm.patchValue({
-//         payment: this.bookingForm.get('payment')?.value - 26
-//       })
-//     }
-
-//   }
-
-//   toggleSeat(seat: number): void {
-//     this.selectedSeat = seat;
-//     this.bookingForm = this.fb.group({
-//       busId: ['', Validators.required],
-//       seatNumber: [seat, Validators.required],
-//       departure: ['', Validators.required],
-//       destination: ['', Validators.required],
-//       departureTime: ['', Validators.required],
-//       payment: ['', Validators.required],
-//     })
-//     if (this.bookedbus) {
-
-//       this.busService.getBusbyId(this.bookedbus._id || '').subscribe({
-//         next: (resdata: IbusgetApiResponse) => {
-//           this.loading = false;
-//           this.bus = resdata.data as Ibus;
-//         },
-//         error: (err) => {
-//           this.loading = false;
-//         }
-//       })
-
-//       const busRoute = this.bookedbus.route
-//       let userpreviusdistance = 0;
-//       let userdistance = 0;
-//       let previusstation = busRoute[0].previousStation;
-//       busRoute.forEach((route, index) => {
-//         if (route.previousStation === previusstation) {
-//           userdistance += route.distance;
-//           previusstation = route.currentStation;
-//         } else {
-//           userpreviusdistance += route.distance;
-//         }
-//       });
-
-//       this.bookingForm.patchValue({
-//         busId: this.bookedbus._id,
-//         seatNumber: seat,
-//         departure: this.bookedbus.departure,
-//         destination: this.bookedbus.destination,
-//         departureTime: (this.bookedbus.departureTime + userpreviusdistance / 50),
-//         payment: userdistance * this.bookedbus.charge,
-//       });
-//     }
-
-
-//   }
-
-//   onSubmit() {
-
-//     if (this.bookingForm.valid) {
-
-//       this.loading = true;
-//       this.bookingService.getbookseat(this.bookingForm.value).subscribe({
-//         next: (resdata: IbookingSeatgetApiResponse) => {
-//           this.loading = false;
-//           this.router.navigate(['/page']);
-//         },
-//         error: (err) => {
-//           this.loading = false;
-
-//         }
-//       })
-//         ;
-//     } else {
-//       Object.values(this.bookingForm.controls).forEach(control => {
-//         control.markAsTouched();
-//       });
-//     }
-//   }
-
-
-// }

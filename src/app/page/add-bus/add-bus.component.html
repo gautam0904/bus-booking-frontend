@@ -9,7 +9,7 @@
         <label class="fs-3 fw-1" style="margin-top: 0;" aria-hidden="true" *ngIf="isedit">Edit Bus</label>
 
         <div class="form-floating">
-          <input [ngClass]="{'form-control':true , 'border-danger': busForm.get('departure')?.invalid && busForm.get('busNumber')?.touched}" for="busNumber" type="text" formControlName="busNumber" placeholder="" required="">
+          <input [ngClass]="{'form-control':true , 'border-danger': busForm.get('busNumber')?.invalid && busForm.get('busNumber')?.touched}" for="busNumber" type="text" formControlName="busNumber" placeholder="" required="">
 
           <div class="text-danger" *ngIf="busForm.get('busNumber')?.hasError('pattern') && busForm.get('busNumber')?.touched">
               Bus Number proper formet like GJ 17 PD 2424.
