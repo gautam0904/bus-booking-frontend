@@ -27,7 +27,7 @@
   line-height: 50px;
   padding: 0px 5px 10px 5px ;
   text-align: center;
-  background-color: #e0e0e0; /* Light gray for seat */
+  background-color: #e0e0e0; 
   border: 1px solid #ccc;
   flex-shrink: 0;
   position: relative;
@@ -40,16 +40,15 @@
 }
 
 .aisle {
-  width: 20px; /* Width of the aisle */
-  background-color: #ccc; /* Gray color for aisle */
-  align-self: stretch; /* Make the aisle extend vertically */
+  width: 20px; 
+  background-color: #ccc; 
+  align-self: stretch; 
 }
 
 .seat:not(.empty):hover {
-  background-color: #d9edf7; /* Light blue on hover */
+  background-color: #d9edf7; 
 }
 
-/* Example seat states */
 .seat-booked {
   background-color: #ffc107; /* Yellow for booked seats */
   color: #333;

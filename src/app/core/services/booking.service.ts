@@ -34,7 +34,7 @@ export class BookingService {
           title: "Oops...",
           text: error.message || 'An error occurred',
           showConfirmButton: false,
-          timer: 1500
+          timer: 2000
         });
         this.router.navigate([''])
         throw error;
@@ -53,7 +53,7 @@ export class BookingService {
           title: "Oops...",
           text: error.message || 'An error occurred',
           showConfirmButton: false,
-          timer: 1500
+          timer: 2000
         });
         throw error;
       })

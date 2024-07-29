@@ -8,7 +8,7 @@
           <button type="button" class="mt-3 border-0 rounded bg-transparent" routerLink="/bus-book" (click)="this.bookingForm.reset();"><i class="pi pi-times"></i></button>
         </div>
         <div class="d-flex align-items-center">
-          <h2>Book Seat : </h2>
+          <span> Seat : </span> 
           <i *ngFor="let s of seats" class="fw-3 mx-1">{{s}} , </i>
         </div>
 

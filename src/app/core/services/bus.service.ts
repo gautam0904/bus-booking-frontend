@@ -23,7 +23,7 @@ export class BusService {
           title: "Oops...",
           text: error.message || 'An error occurred',
           showConfirmButton : false,
-          timer: 1500
+          timer: 2000
         });
         throw error;
       })
@@ -39,7 +39,7 @@ export class BusService {
           title: "Oops...",
           text: error.message || 'An error occurred',
           showConfirmButton : false,
-          timer: 1500
+          timer: 2000
         });
         throw error;
       })
@@ -61,7 +61,7 @@ export class BusService {
           title: "Oops...",
           text: error.message || 'An error occurred',
           showConfirmButton : false,
-          timer: 1500
+          timer: 2000
         });
         throw error;
       })

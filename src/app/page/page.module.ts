@@ -13,13 +13,23 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTableModule } from '@angular/material/table'; 
+import {MatGridListModule} from '@angular/material/grid-list';
+import { SearchBusComponent } from './search-bus/search-bus.component';
+import { UsersComponent } from './users/users.component';
+import { RouteComponent } from './route/route.component';
+import { StationsComponent } from './stations/stations.component';
 
 @NgModule({
   declarations: [
     DashboardComponent,
     AddBusComponent,
     BookBusComponent,
-    BookBusFormComponent
+    BookBusFormComponent,
+    SearchBusComponent,
+    UsersComponent,
+    RouteComponent,
+    StationsComponent
   ],
   imports: [
     CommonModule,
@@ -31,7 +41,9 @@ import { MatIconModule } from '@angular/material/icon';
     MatToolbarModule,
     MatDividerModule,
     MatListModule,
-    MatIconModule
+    MatIconModule,
+    MatTableModule,
+    MatGridListModule
   ]
 })
 export class PageModule { }

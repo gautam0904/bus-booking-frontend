@@ -31,7 +31,7 @@ export class AddBusComponent {
     this.role = JSON.parse(localStorage.getItem('user') as string)?.role || "";
     this.busForm = this.fb.group({
       _id: [""],
-      busNumber: ['', [Validators.required, Validators.pattern('^[A-Z]{2}[ -][0-9]{1,2}(?: [A-Z])?(?: [A-Z]*)? [0-9]{4}$')]],
+      busNumber: ['', [Validators.required, Validators.pattern('^[0-9]{1,3}[ -][A-Z]{1}$')]],
       departure: ['', Validators.required],
       departureTime: ['', Validators.required],
       destination: ['', Validators.required],
@@ -134,6 +134,15 @@ export class AddBusComponent {
   setInitialValues() {
     if (this.cloneBus) {
       this.isedit = true;
+      this.busForm.patchValue({
+        _id: this.cloneBus._id,
+        busNumber: this.cloneBus.busNumber,
+        departure: this.cloneBus.departure,
+        departureTime: this.cloneBus.departureTime,
+        destination: this.cloneBus.destination,
+        TotalSeat: this.cloneBus.TotalSeat,
+        charge: this.cloneBus.charge,
+      });
       this.cloneBus.route.forEach((item: any) => {
         this.addRoute();
         this.routeArray.at(this.routeArray.length - 1).patchValue({
@@ -143,13 +152,6 @@ export class AddBusComponent {
         });
       })
       this.busForm.patchValue({
-        _id: this.cloneBus._id,
-        busNumber: this.cloneBus.busNumber,
-        departure: this.cloneBus.departure,
-        departureTime: this.cloneBus.departureTime,
-        destination: this.cloneBus.destination,
-        TotalSeat: this.cloneBus.TotalSeat,
-        charge: this.cloneBus.charge,
         route: this.cloneBus.route
       });
     }

@@ -11,11 +11,20 @@ import { ErrorInterceptor } from './core/interceptors/error.interceptor';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DistancePipe } from './distance.pipe';
+import { MatCardModule } from '@angular/material/card';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatListModule } from '@angular/material/list';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTableModule } from '@angular/material/table'; 
+import {MatGridListModule} from '@angular/material/grid-list';
+
 
 @NgModule({
   declarations: [
     AppComponent,
-    DistancePipe,    
+    DistancePipe,  
+ 
   ],
   imports: [
     BrowserModule,
@@ -24,6 +33,13 @@ import { DistancePipe } from './distance.pipe';
     HttpClientModule,
     LayoutModule,
     BrowserAnimationsModule,
+    MatCardModule,
+    MatToolbarModule,
+    MatDividerModule,
+    MatListModule,
+    MatIconModule,
+    MatTableModule,
+    MatGridListModule  
   ],
   providers: [
     {

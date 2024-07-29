@@ -1,29 +1,14 @@
 
-.form {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    padding: 20px;
-}
-
-.signup-form{
-  width: 50%;
-}
-
-.form-select{
-  background-color:  rgba(255, 255, 255, 0.07) !important;
-}
-
-.form-floating>.form-control-plaintext~label::after, .form-floating>.form-control:focus~label::after, .form-floating>.form-control:not(:placeholder-shown)~label::after, .form-floating>.form-select~label::after {
-  background-color : transparent !important;
-}
-
-
 .item {
   display: flex;
   align-items: center;
   padding: 15px;
   border-bottom: 1px solid #eee;
+}
+
+button{
+  background-color: #fff9e5 ;
+  color: #000;
 }
 
 .item:last-child {
@@ -44,8 +29,34 @@
   margin-right: 15px;
 }
 
+mat-grid-tile {
+  background: #fff5e7;
+}
+
 .circle.ontime {
   background-color: #4CAF50;
+}
+
+.route-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.route-line {
+  width: 3px;
+  height: 100%;
+  background-color: #4CAF50;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-114px, 29px);
+  z-index: 0;
+}
+
+.mat-mdc-card{
+  width: 100%;
 }
 
 .info {
@@ -60,7 +71,6 @@
 
 .time {
   font-size: 14px;
-  color: #666;
 }
 
 .card{

@@ -4,6 +4,10 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { AddBusComponent } from './add-bus/add-bus.component';
 import { BookBusComponent } from './book-bus/book-bus.component';
 import { BookBusFormComponent } from './book-bus-form/book-bus-form.component';
+import { SearchBusComponent } from './search-bus/search-bus.component';
+import { RouteComponent } from './route/route.component';
+import { UsersComponent } from './users/users.component';
+import { StationsComponent } from './stations/stations.component';
 
 const routes: Routes = [
   {
@@ -21,6 +25,22 @@ const routes: Routes = [
   {
     path : 'booked-bus-form',
     component : BookBusFormComponent
+  },
+  {
+    path : 'search-bus',
+    component : SearchBusComponent
+  },
+  {
+    path : 'routes',
+    component : RouteComponent
+  },
+  {
+    path : 'users',
+    component : UsersComponent
+  },
+  {
+    path : 'stations',
+    component : StationsComponent
   },
   {
     path : '**',
