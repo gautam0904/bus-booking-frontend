@@ -1,0 +1,59 @@
+.full-height {
+    height: 100vh;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 20px;
+}
+
+.signup-form{
+  width: 25%;
+  position: absolute;
+  top: 120px;
+}
+
+.form-floating>.form-control-plaintext~label::after, .form-floating>.form-control:focus~label::after, .form-floating>.form-control:not(:placeholder-shown)~label::after, .form-floating>.form-select~label::after {
+  background-color : transparent !important;
+}
+
+.card{
+  --bs-card-border-width: unset;
+}
+@media (max-width: 768px) {
+  .signup-form{
+      width: 100%;
+    }
+}
+.mat-mdc-card{
+    background-color: #fff9e5 ;
+}
+
+.user {
+    width: 19%;
+    padding: 2%;
+}
+
+@media  (max-width: 1400px) {
+    .user {
+        width: 23%;
+        padding: 1%;
+    }
+  }
+@media  (max-width: 768px) {
+    .user {
+        width: 30%; 
+    }
+  }
+@media  (max-width: 576px) {
+    .user {
+        width: 45%;
+    }
+  }
+@media  (max-width: 376px) {
+    .user {
+        width: 90%;
+    }
+  }

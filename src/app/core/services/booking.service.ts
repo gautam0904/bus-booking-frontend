@@ -31,7 +31,7 @@ export class BookingService {
       catchError((error) => {
         Swal.fire({
           icon: "error",
-          title: "Oops...",
+          title: "Error...",
           text: error.message || 'An error occurred',
           showConfirmButton: false,
           timer: 2000
@@ -50,7 +50,7 @@ export class BookingService {
       catchError((error) => {
         Swal.fire({
           icon: "error",
-          title: "Oops...",
+          title: "Error...",
           text: error.message || 'An error occurred',
           showConfirmButton: false,
           timer: 2000

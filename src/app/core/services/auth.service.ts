@@ -27,7 +27,7 @@ export class AuthService {
       catchError((error) => {
         Swal.fire({
           icon: "error",
-          title: "Oops...",
+          title: "Error...",
           text: error.message || 'An error occurred',
         });
         throw error;
@@ -48,7 +48,7 @@ export class AuthService {
         catchError((error) => {
           Swal.fire({
             icon: "error",
-            title: "Oops...",
+            title: "Error...",
             text: error.error.message || 'An error occurred',
           });
           throw error;
@@ -69,7 +69,7 @@ export class AuthService {
       catchError((error) => {
         Swal.fire({
           icon: "error",
-          title: "Oops...",
+          title: "Error...",
           text: error.error.message || 'An error occurred',
         });
         throw error;
@@ -82,7 +82,7 @@ export class AuthService {
       catchError((error) => {
         Swal.fire({
           icon: "error",
-          title: "Oops...",
+          title: "Error...",
           text: error.error.message || 'An error occurred',
         });
         throw error;
@@ -102,8 +102,8 @@ export class AuthService {
       catchError((error) => {
         Swal.fire({
           icon: "error",
-          title: "Oops...",
-          text: error.error.message || 'An error occurred',
+          title: "Error...",
+          text: error.message || 'An error occurred',
         });
         throw error;
       })

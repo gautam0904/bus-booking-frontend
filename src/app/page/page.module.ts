@@ -19,7 +19,9 @@ import { SearchBusComponent } from './search-bus/search-bus.component';
 import { UsersComponent } from './users/users.component';
 import { RouteComponent } from './route/route.component';
 import { StationsComponent } from './stations/stations.component';
-
+import { TableModule } from 'primeng/table';
+import { ToastModule } from 'primeng/toast';
+import { ButtonModule } from 'primeng/button';
 @NgModule({
   declarations: [
     DashboardComponent,
@@ -43,7 +45,10 @@ import { StationsComponent } from './stations/stations.component';
     MatListModule,
     MatIconModule,
     MatTableModule,
-    MatGridListModule
+    MatGridListModule,
+    TableModule,
+    ToastModule,
+    ButtonModule
   ]
 })
 export class PageModule { }

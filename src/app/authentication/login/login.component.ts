@@ -13,7 +13,7 @@ export class LoginComponent {
   loginform !: FormGroup;
   loading: boolean = false;
 
-  constructor(private fb: FormBuilder, private authService : AuthService , private router: Router) { }
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) { }
 
   ngOnInit(): void {
     this.loginform = this.fb.group({

@@ -52,8 +52,6 @@ export class RouteService {
 
 
   createRoute(updateData: Iroute): Observable<IrouteCreateResponse> {
-    console.log(updateData);
-    
     return this.http.post<IrouteCreateResponse>('/route/create', updateData).pipe(
       tap((resdata: IrouteCreateResponse) => {
         Swal.fire({
@@ -94,7 +92,7 @@ export class RouteService {
   }
 
   updateRoute(updateData: Iroute): Observable<IrouteCreateResponse> {
-    return this.http.put<IrouteCreateResponse>(`/Routees/update/${updateData._id}`, updateData).pipe(
+    return this.http.put<IrouteCreateResponse>(`/route/update/${updateData._id}`, updateData).pipe(
       tap((resdata: IrouteCreateResponse) => {
         Swal.fire({
           icon: "success",

@@ -20,7 +20,7 @@ export class BusService {
       catchError((error) => {
         Swal.fire({
           icon: "error",
-          title: "Oops...",
+          title: "Error...",
           text: error.message || 'An error occurred',
           showConfirmButton : false,
           timer: 2000
@@ -36,7 +36,7 @@ export class BusService {
       catchError((error) => {
         Swal.fire({
           icon: "error",
-          title: "Oops...",
+          title: "Error...",
           text: error.message || 'An error occurred',
           showConfirmButton : false,
           timer: 2000
@@ -58,7 +58,7 @@ export class BusService {
       catchError((error) => {
         Swal.fire({
           icon: "error",
-          title: "Oops...",
+          title: "Error...",
           text: error.message || 'An error occurred',
           showConfirmButton : false,
           timer: 2000
@@ -82,7 +82,7 @@ export class BusService {
       catchError((error) => {
         Swal.fire({
           icon: "error",
-          title: "Oops...",
+          title: "Error...",
           text: error.message || 'An error occurred',
         });
         throw error;
@@ -102,7 +102,7 @@ export class BusService {
       catchError((error) => {
         Swal.fire({
           icon: "error",
-          title: "Oops...",
+          title: "Error...",
           text: error.message || 'An error occurred',
         });
         throw error;
@@ -122,7 +122,7 @@ export class BusService {
       catchError((error) => {
         Swal.fire({
           icon: "error",
-          title: "Oops...",
+          title: "Error...",
           text: error.message || 'An error occurred',
         });
         throw error;
