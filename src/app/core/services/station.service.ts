@@ -37,10 +37,21 @@ export class StationService {
 
 
 
-  getstationbyFilter(stationdata : Istation): Observable<IstaionGetApiresponse> {
-    return this.http.get<IstaionGetApiresponse>('/station/get' , { params :{
-     stattion : stationdata.station.toLowerCase(),
-    }}).pipe(
+  getstationbyFilter(station : string): Observable<IstaionGetApiresponse> {
+    return this.http.get<IstaionGetApiresponse>('/station/getByName' , { params :{
+    station}}).pipe(
+      catchError((error) => {
+        Swal.fire({
+          icon: "error",
+          title: "Error...",
+          text: error.message || 'An error occurred',
+        });
+        throw error;
+      })
+    );
+  }
+  getstationbyId(id : string): Observable<IstaionGetApiresponse> {
+    return this.http.get<IstaionGetApiresponse>(`/station/get/${id}`).pipe(
 
       catchError((error) => {
         Swal.fire({

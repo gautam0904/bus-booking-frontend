@@ -1,9 +1,11 @@
 export interface Iroute {
     _id : string;
     routeName: string;
+    departure? : string;
+    destination? : string;
     stations: [{
-        previousStation: string;
-        currentStation: string;
+        station: string;
+        order: string;
         distance: number;
     }];
 }

@@ -1,5 +1,114 @@
-button{
+
+.item {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.item:last-child {
+  border-bottom: none;
+}
+
+.item-content.d-flex {
+  display: flex;
+  flex-grow: 1;
+  justify-content: space-between; /* Distribute items evenly */
+}
+
+.circle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #ccc;
+  margin-right: 15px;
+}
+
+mat-grid-tile {
+  background: #fff5e7;
+}
+
+.circle.ontime {
+  background-color: #4CAF50;
+}
+
+.route-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.route-line {
+  width: 3px;
+  height: 100%;
+  background-color: #4CAF50;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-114px, 29px);
+  z-index: 0;
+}
+
+.mat-mdc-card{
+  width: 100%;
+}
+
+.info {
+  flex: 1;
+}
+
+.title {
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+.time {
+  font-size: 14px;
+}
+
+.card{
+  --bs-card-border-width: unset;
+}
+@media (max-width: 768px) {
+  .signup-form , .post{
+      width: 100%;
+    }
+
+}
+
+.bt{
     background-color: #fff9e5 ;
     color: #000;
   }
   
+  .full-height {
+    height: 100vh;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 20px;
+}
+
+.signup-form{
+  width: 25%;
+  position: absolute;
+  top: 120px;
+}
+
+.form-floating>.form-control-plaintext~label::after, .form-floating>.form-control:focus~label::after, .form-floating>.form-control:not(:placeholder-shown)~label::after, .form-floating>.form-select~label::after {
+  background-color : transparent !important;
+}
+
+.card{
+  --bs-card-border-width: unset;
+}
+@media (max-width: 768px) {
+  .signup-form{
+      width: 100%;
+    }
+}

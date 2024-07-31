@@ -3,6 +3,7 @@ import { BehaviorSubject } from 'rxjs';
 import { Iuser } from '../interfaces/iuser';
 import { Ibus } from '../interfaces/ibus';
 import { IBookUser } from '../interfaces/i-book-user';
+import { Iroute } from '../interfaces/iroute.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +20,7 @@ export class SharedService {
   bookUser$ = this.bookUser.asObservable();
 
   private bus = new BehaviorSubject<Ibus | undefined>(undefined);
-  bus$ = this.bus.asObservable();
+  bus$ = this.bus.asObservable()
   
   private seat = new BehaviorSubject<number[] | undefined>(undefined);
   seat$ = this.seat.asObservable();
