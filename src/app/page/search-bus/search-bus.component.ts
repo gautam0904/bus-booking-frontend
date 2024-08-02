@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Ibus } from 'src/app/core/interfaces/ibus';
@@ -14,7 +15,6 @@ import Swal from 'sweetalert2';
   styleUrls: ['./search-bus.component.scss']
 })
 export class SearchBusComponent {
-
   searchBusForm!: FormGroup;
   role !: string;
   isedit = false;
@@ -54,12 +54,13 @@ export class SearchBusComponent {
     this.router.navigate(['/add-bus']);
   }
 
-  singleLady(e: any) {
-    if (e.target.checked) {
+  singleLady(e: MatCheckboxChange) {
+    if (e.checked) {
       this.searchBusForm.patchValue({
         seat: 1
       })
       this.searchBusForm.get('seat')?.disable()
+      
     }
     else {
       this.searchBusForm.patchValue({
@@ -110,6 +111,7 @@ export class SearchBusComponent {
         destination: this.searchBusForm.get('destination')?.value,
         charge: bus.charge,
         route: bus.route,
+        stops : bus.stops,
         departureTime: new Date().toISOString()
       }
       this.sharedService.setBookBusData(bookedbus)
@@ -120,7 +122,7 @@ export class SearchBusComponent {
 
   selectBus(bus: Ibus) {
     this.selectedBus = bus;
-    this.dataSource = this.selectedBus.route;
+    
   }
 
   onSubmit() {

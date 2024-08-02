@@ -13,8 +13,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
-import { MatTableModule } from '@angular/material/table'; 
-import {MatGridListModule} from '@angular/material/grid-list';
+import { MatTableModule } from '@angular/material/table';
+import { MatGridListModule } from '@angular/material/grid-list';
 import { SearchBusComponent } from './search-bus/search-bus.component';
 import { UsersComponent } from './users/users.component';
 import { RouteComponent } from './route/route.component';
@@ -22,6 +22,17 @@ import { StationsComponent } from './stations/stations.component';
 import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+
+
 @NgModule({
   declarations: [
     DashboardComponent,
@@ -48,7 +59,16 @@ import { ButtonModule } from 'primeng/button';
     MatGridListModule,
     TableModule,
     ToastModule,
-    ButtonModule
+    ButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatCheckboxModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatButtonModule,
+    MatDialogModule,
+    MatSnackBarModule
   ]
 })
 export class PageModule { }

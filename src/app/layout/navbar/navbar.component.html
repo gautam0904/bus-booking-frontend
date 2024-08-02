@@ -1,30 +1,56 @@
-<nav class="Navbar navbar navbar-expand-lg bg-body-tertiary border-bottom border-secondary">
-
-    <div class="d-flex align-items-center fs-3 mx-3">{{user.name}} </div>
-    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
-        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-        aria-label="Toggle navigation">
-        <div id="menuToggle">
-            <input id="checkbox" type="checkbox">
-            <label class="toggle" for="checkbox">
-                <div class="bar bar--top"></div>
-                <div class="bar bar--middle"></div>
-                <div class="bar bar--bottom"></div>
-            </label>
-        </div>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item menu">
-                <a class="nav-link active" aria-current="page" routerLink="/">Home <i class="pi pi-home"></i></a>
-            </li>
-           
-
-
-        </ul>
-        <button class="btn text-danger p-0 me-3" (click)="logout()" type="button">Logout <i
-                class="pi pi-user-minus"></i></button>
-
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <!-- User Name -->
+    <div class="navbar-text me-auto fs-4">
+      {{ user.name }}
     </div>
 
+    <!-- Menu Toggle Button -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Navbar Links -->
+    <div class="collapse navbar-collapse z-3" id="navbarNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" routerLink="/" routerLinkActive="active">
+            <i class="fa-solid fa-home"></i> Home
+          </a>
+        </li>
+
+        <!-- Conditionally render links for admin role -->
+        <li class="nav-item" *ngIf="role === 'admin'">
+          <a class="nav-link" routerLink="/search-bus" routerLinkActive="active">
+            <i class="fa-solid fa-magnifying-glass-location"></i> Search Bus
+          </a>
+        </li>
+        <li class="nav-item" *ngIf="role === 'admin'">
+          <a class="nav-link" routerLink="/users" routerLinkActive="active">
+            <i class="fa-solid fa-users"></i> Users
+          </a>
+        </li>
+        <li class="nav-item" *ngIf="role === 'admin'">
+          <a class="nav-link" routerLink="/routes" routerLinkActive="active">
+            <i class="fa-solid fa-route"></i> Routes
+          </a>
+        </li>
+        <li class="nav-item" *ngIf="role === 'admin'">
+          <a class="nav-link" routerLink="/bookings" routerLinkActive="active">
+            <i class="fa-solid fa-ticket"></i> Bookings
+          </a>
+        </li>
+        <li class="nav-item" *ngIf="role === 'admin'">
+          <a class="nav-link" routerLink="/stations" routerLinkActive="active">
+            <i class="fa-solid fa-location-dot"></i> Stations
+          </a>
+        </li>
+      </ul>
+
+      <!-- Logout Button -->
+      <button class="btn btn-outline-danger ms-2" (click)="logout()">
+        <i class="fa-solid fa-sign-out-alt"></i> Logout
+      </button>
+    </div>
+  </div>
 </nav>

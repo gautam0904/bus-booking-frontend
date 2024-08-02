@@ -1,101 +1,94 @@
 <app-loading *ngIf="loading"></app-loading>
-<div *ngIf="!loading && showform" class="container full-height d-flex justify-content-center align-items-center">
-  <div class="signup-form">
-    <div>
-      <form [formGroup]="searchBusForm" (ngSubmit)="onSubmit()">
-        <button *ngIf="isedit" type="button" class="ms-auto mt-3 border-0 rounded bg-transparent" routerLink="/" (click)="this.searchBusForm.reset(); isedit=false"><i class="pi pi-times"></i></button>
 
-        <label class="fs-1 fw-1" aria-hidden="true" *ngIf="!isedit">Search Bus</label>
+<div *ngIf="!loading && showform" class="container d-flex justify-content-center align-items-center full-height">
+  <mat-card class="signup-form" style="width: 100%; max-width: 600px; padding: 16px;">
 
-        <div class="form-floating">
-          <input [ngClass]="{'form-control':true , 'border-danger': searchBusForm.get('departure')?.invalid && searchBusForm.get('departure')?.touched}" for="departure" type="text" formControlName="departure" placeholder="" required="">
 
-          <div class="text-danger" *ngIf="searchBusForm.get('departure')?.invalid && searchBusForm.get('departure')?.touched">
-            departure is required .
-          </div>
+    <mat-toolbar color="primary" class="mat-elevation-z4 my-4">
+      <span>{{ !isedit ? 'Search Bus' : 'Edit Search' }}</span>
+      <button class="ms-auto" mat-icon-button routerLink="/" (click)="this.searchBusForm.reset(); isedit=false">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-toolbar>
 
-          <label for="floatingTextarea">Bus departure</label>
-        </div>
+    <form [formGroup]="searchBusForm" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="fill" class="w-100 m-1">
+        <mat-label>Bus Departure</mat-label>
+        <input matInput formControlName="departure" type="text" placeholder="Enter departure" required  [ngClass]="{'mat-form-field__input--error': searchBusForm.get('departure')?.invalid && searchBusForm.get('departure')?.touched}">
+        <mat-error *ngIf="searchBusForm.get('departure')?.invalid && searchBusForm.get('departure')?.touched">
+          Please provide a password.
+        </mat-error>
+      </mat-form-field>
 
-        <div class="form-floating">
-          <input [ngClass]="{'form-control' : true , 'border-danger' : searchBusForm.get('destination')?.invalid && searchBusForm.get('destination')?.touched}" for="destination" type="text" formControlName="destination" placeholder="" required="">
+      <mat-form-field appearance="fill" class="w-100 m-1">
+        <mat-label>Bus Destination</mat-label>
+        <input matInput formControlName="destination" type="text" placeholder="Enter departure" required>
+        <mat-error *ngIf="searchBusForm.get('destination')?.invalid && searchBusForm.get('destination')?.touched">
+          Destination is required.
+        </mat-error>
+      </mat-form-field>
+      
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Bus Booking Date</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="bookingDate" placeholder="Choose a date" [attr.min]="minDate">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        <mat-error *ngIf="searchBusForm.get('bookingDate')?.invalid && searchBusForm.get('bookingDate')?.touched">
+          Booking Date is required.
+        </mat-error>
+      </mat-form-field>
+      
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Number of Seats</mat-label>
+        <mat-select formControlName="seat">
+          <mat-option [value]="1">{{ "One" }}</mat-option>
+          <mat-option [value]="2">{{ "Two" }}</mat-option>
+          <mat-option [value]="3">{{ "Three" }}</mat-option>
+          <mat-option [value]="4">{{ "Four" }}</mat-option>
+          <mat-option [value]="5">{{ "Five" }}</mat-option>
+          <mat-option [value]="6">{{ "Six" }}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="searchBusForm.get('seat')?.invalid && searchBusForm.get('seat')?.touched">
+          Bus Seat is required.
+        </mat-error>
+      </mat-form-field>
+      
+      <mat-checkbox formControlName="isSingleLady" (change)="singleLady($event)">
+        Single Lady
+      </mat-checkbox>
 
-          <div class="text-danger" *ngIf="searchBusForm.get('destination')?.invalid && searchBusForm.get('destination')?.touched">
-            departure is required.
-          </div>
-
-          <label for="floatingTextarea">Bus destination</label>
-        </div>
-
-        <div class="form-floating">
-          <input [ngClass]="{'form-control' : true , 'border-danger' : searchBusForm.get('bookingDate')?.invalid && searchBusForm.get('bookingDate')?.touched}" for="bookingDate" type="date" formControlName="bookingDate" placeholder="" required="" [attr.min]="minDate">
-
-          <div class="text-danger" *ngIf="searchBusForm.get('bookingDate')?.invalid && searchBusForm.get('bookingDate')?.touched">
-            booking Date is required.
-          </div>
-
-          <label for="floatingTextarea">Bus booking Date</label>
-        </div>
-
-        <div class="form-floating my-2">
-
-          <select class="form-select" aria-label="Default select example" formControlName="seat" placeholder="">
-            <option class="bg-dark" value="1">One</option>
-            <option class="bg-dark" value="2">Two</option>
-            <option class="bg-dark" value="3">Three</option>
-            <option class="bg-dark" value="4">Four</option>
-            <option class="bg-dark" value="5">Five</option>
-            <option class="bg-dark" value="6">Six</option>
-          </select>
-          <label for="floatingTextarea">Number of Seat </label>
-          <div class="text-danger" *ngIf="searchBusForm.get('seat')?.invalid && searchBusForm.get('seat')?.touched">
-            Bus Seat is required.
-          </div>
-        </div>
-
-        <div class="form-floating my-4">
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" formControlName="isSingleLady" (change)="singleLady($event)" required="">
-            <label class="form-check-label mx-2 my-1" for="flexCheckIndeterminate">
-              Single Lady
-            </label>
-          </div>
-        </div>
-
-        <button class="button-primary" type="submit">Search Bus </button>
-      </form>
-    </div>
-  </div>
+      <div class="form-actions d-flex justify-content-end">
+        <button mat-raised-button color="primary" type="submit">Search Bus</button>
+      </div>
+    </form>
+  </mat-card>
 </div>
 
-
-<div *ngIf="!loading" class="d-flex flex-wrap gap-3 mt-5 container">
-  <div class="card post p-3" *ngFor="let b of buses">
-    <div>
-      <i class="fa-solid fa-bus-simple fa-2x"></i>
-    </div>
-    <div>
-      <div class="title fs-2 fw-1">
-        {{b.busNumber}}
-      </div>
-
-      <div class="title fs-4 fw-5">
-        Departure : {{b.departure}}
-      </div>
-
-      <div class="title fs-4 fw-5">
-        Destination : {{b.destination}}
-      </div>
-
-      <div class="description text-truncate">
-        {{b.departureTime}}
-      </div>
-
-      <div class="d-flex justify-content-between mt-2">
-        <a *ngIf="role === 'admin'" (click)="onbusUpdate(b)"><button class="btn-lg btn button"> <i class="text-primary fa-solid fa-2x fa-pen-to-square"></i> </button></a>
-        <button *ngIf="role === 'admin'" class="text-danger btn" (click)="ondelete(b)"><i class="fa-regular fa-trash-can fa-2x"></i></button>
-        <button *ngIf="searching" (click)="bookBus(b)" class="btn"><img style="width: 60px; " class="img-fluid" src="../../../assets/Ecostyle_leather_seats.png" alt=""></button>
-        <button type="button" class="btn" (click)="selectBus(b)" data-bs-toggle="modal" data-bs-target="#exampleModal"><i class="fa-solid fa-route fa-2x"></i></button>
+<div *ngIf="!loading" class="container mt-5">
+  <div class="d-flex flex-wrap gap-3">
+    <div class="card post p-3" *ngFor="let b of buses">
+      <div class="d-flex flex-column align-items-center">
+        <i class="fa-solid fa-bus-simple fa-2x mb-2"></i>
+        <div class="title fs-2 fw-1">{{ b.busNumber }}</div>
+        <div class="title fs-4 fw-5">Departure : {{ b.departure }}</div>
+        <div class="title fs-4 fw-5">Destination : {{ b.destination }}</div>
+        <div class="description text-truncate">{{ b.departureTime }}</div>
+        <div class="d-flex mt-2">
+          <a *ngIf="role === 'admin'" (click)="onbusUpdate(b)">
+            <button class="btn btn-primary me-2">
+              <i class="fa-solid fa-pen-to-square"></i>
+            </button>
+          </a>
+          <button *ngIf="role === 'admin'" class="btn btn-danger me-2" (click)="ondelete(b)">
+            <i class="fa-regular fa-trash-can"></i>
+          </button>
+          <button *ngIf="searching" (click)="bookBus(b)" class="btn">
+            <img style="width: 60px;" class="img-fluid" src="../../../assets/Ecostyle_leather_seats.png" alt="Book">
+          </button>
+          <button type="button" class="btn btn-info ms-2" (click)="selectBus(b)" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            <i class="fa-solid fa-route fa-2x"></i>
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -103,126 +96,42 @@
 
 <!-- Modal for displaying bus route -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <h1 class="modal-title fs-5" id="exampleModalLabel">Bus Route</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <!-- <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-
-          <ng-container matColumnDef="Station">
-            <th mat-header-cell *matHeaderCellDef> Station </th>
-            <td mat-cell *matCellDef="let element"> {{element.previousStation}} </td>
-          </ng-container>
-        
-          <ng-container matColumnDef="Arrival Time">
-            <th mat-header-cell *matHeaderCellDef> Arrival Time </th>
-            <td mat-cell *matCellDef="let element"> {{element.arrivalTime}} </td>
-          </ng-container>
-        
-          <ng-container matColumnDef="Distance">
-            <th mat-header-cell *matHeaderCellDef> Distance </th>
-            <td mat-cell *matCellDef="let element"> {{element.distance}} </td>
-          </ng-container>
-                
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns; index"></tr>
-        </table> -->
-
-        <div class="route-container">
-          <mat-card *ngIf="selectedBus">
-            <mat-card-header>
-              <mat-card-title class="text-light">Bus Route for {{ selectedBus.busNumber }}</mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-              <div class="route-details">
-
-                <mat-list>
-                  <mat-list-item class="item d-flex justify-content-center align-items-center">
-                    <div class="item-content d-flex">
-
-                        <div class="title">
-                          <div matLine >
-                            <span class="me-1"></span>
-                          </div>
-                        </div>
-                    
-                      <div class="info">
-                        <div class="title">
-                          <div matLine>
-                            <span>Station</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="title">
-                        <div matLine >
-                          <span class="me-1">Arrival Time </span>
-                          <span>Distance</span>
-                        </div>
-                      </div>
-                    </div>
-
-                  </mat-list-item>
-                  
-                </mat-list>
-
-                <mat-list>
-                  <mat-list-item class="item d-flex justify-content-center align-items-center">
-                    <div class="item-content d-flex">
-                      <div class="circle ontime">
-                        <mat-icon matListItemIcon></mat-icon>
-                      </div>
-
-                      <div class="info">
-                        <div class="title">
-                          <div matLine>
-                            <span>{{ selectedBus.departure }}</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="time">
-                        <div matLine >
-                          <span class="me-1">{{ selectedBus.departureTime }}</span>
-                          <span>{{ 0 | number}}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                  </mat-list-item>
-                  
-                </mat-list>
-
-                <mat-list>
-                  <mat-list-item class="item d-flex justify-content-center align-items-center" *ngFor="let station of selectedBus.route">
-                    <div class="item-content d-flex">
-                      <div class="circle ontime">
-                        <mat-icon matListItemIcon></mat-icon>
-                      </div>
-                      <div class="info">
-                        <div class="title">
-                          <div matLine>
-                            <span>{{ station.currentStation }}</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="time">
-                        <div matLine >
-                          <span class="me-1">{{ station.arrivalTime }}</span>
-                          <span>{{ station.distance | number }}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                  </mat-list-item>
-                  
-                </mat-list>
-                
-              </div>
-            </mat-card-content>
-          </mat-card>
-        </div>
+        <mat-card *ngIf="selectedBus">
+          <mat-card-header>
+            <mat-card-title>Bus Route for {{ selectedBus.busNumber }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <mat-list>
+              <mat-list-item class="d-flex align-items-center">
+                <div class="me-2">
+                  <mat-icon>directions_bus</mat-icon>
+                </div>
+                <div class="me-2 flex-grow-1">
+                  <div class="title">{{ selectedBus.departure }}</div>
+                </div>
+                <div>
+                  <div class="time">{{ selectedBus.departureTime }}</div>
+                </div>
+              </mat-list-item>
+              <mat-list-item *ngFor="let station of selectedBus.route" class="d-flex align-items-center">
+                <div class="me-2">
+                  <mat-icon>location_on</mat-icon>
+                </div>
+          
+                <div>
+                  <!-- <div class="time">{{ station.arrivalTime }} - {{ station.distance | number }} km</div> -->
+                </div>
+              </mat-list-item>
+            </mat-list>
+          </mat-card-content>
+        </mat-card>
       </div>
     </div>
   </div>

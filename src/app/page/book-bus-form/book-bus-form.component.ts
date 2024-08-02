@@ -104,16 +104,16 @@ export class BookBusFormComponent implements OnInit {
       let userpreviusdistance = 0;
       let userdistance = 0;
 
-      let previusstation = busRoute[0].previousStation;
+      // let previusstation = busRoute[0].previousStation;
 
-      busRoute.forEach((route, index) => {
-        if (route.previousStation === previusstation) {
-          userdistance += route.distance;
-          previusstation = route.currentStation;
-        } else {
-          userpreviusdistance += route.distance;
-        }
-      });
+      // busRoute.forEach((route, index) => {
+      //   if (route.previousStation === previusstation) {
+      //     userdistance += route.distance;
+      //     previusstation = route.currentStation;
+      //   } else {
+      //     userpreviusdistance += route.distance;
+      //   }
+      // });
 
       let newDepartureTime = new Date(new Date(this.bookedbus.departureTime).getTime() + (userpreviusdistance / 50) * 60000);
 

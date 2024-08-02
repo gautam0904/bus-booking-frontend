@@ -1,11 +1,19 @@
 import { Component } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { MatSelectChange } from '@angular/material/select';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { MessageService } from 'primeng/api';
+import { catchError, firstValueFrom, forkJoin, map, Subscription } from 'rxjs';
 import { Ibus } from 'src/app/core/interfaces/ibus';
 import { IbusCreateApiResponse } from 'src/app/core/interfaces/ibus-create-api-response';
+import { IrouteGetResponse } from 'src/app/core/interfaces/iroute-get-response';
+import { Iroute } from 'src/app/core/interfaces/iroute.interface';
+import { IstaionGetApiresponse } from 'src/app/core/interfaces/istaion-get-apiresponse';
+import { Istation } from 'src/app/core/interfaces/istation';
+import { RouteService } from 'src/app/core/route.service';
 import { BusService } from 'src/app/core/services/bus.service';
 import { SharedService } from 'src/app/core/services/shared.service';
+import { StationService } from 'src/app/core/services/station.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -17,33 +25,45 @@ export class AddBusComponent {
   isedit = false;
   routeValid = true;
   role!: string;
+  routes: Iroute[] = []
   busForm!: FormGroup;
   cloneBus: Ibus | undefined;
   loading: boolean = false;
+  departureStation : string | undefined;
+  destinationStation : string | undefined;
+  stations: Istation[] = [];
   private subscription: Subscription = new Subscription();
 
   constructor(private fb: FormBuilder,
     private busService: BusService,
     private router: Router,
     private sharedService: SharedService,
-
+    private routeService: RouteService,
+    private stationService: StationService,
+    private messageService: MessageService,
   ) {
     this.role = JSON.parse(localStorage.getItem('user') as string)?.role || "";
     this.busForm = this.fb.group({
       _id: [""],
       busNumber: ['', [Validators.required, Validators.pattern('^[0-9]{1,3}[ -][A-Z]{1}$')]],
+      route: ['', Validators.required],
       departure: ['', Validators.required],
       departureTime: ['', Validators.required],
       destination: ['', Validators.required],
       TotalSeat: [Validators.required, this.seatRangeValidator()],
       charge: ['', Validators.required],
-      route: this.fb.array([])
+      stops: this.fb.array([])
     });
 
   }
 
 
   ngOnInit(): void {
+    this.routeService.getAll().subscribe({
+      next: (res: IrouteGetResponse) => {
+        this.routes = (res.data as Iroute[]);
+      }
+    })
     this.subscription.add(
       this.sharedService.bus$.subscribe(b => {
         this.cloneBus = b;
@@ -58,54 +78,109 @@ export class AddBusComponent {
       if (value !== null && (isNaN(value) || value < 0 || value > 50)) {
         return { 'seatRange': true };
       }
-      return null; 
+      return null;
     };
   }
 
-  get routeArray() {
-    return (this.busForm.get('route') as FormArray);
-  }
 
-  createRoute(): FormGroup {
-    if (this.routeArray.length == 0) {
-      return this.fb.group({
-        previousStation: [{ value: this.busForm.value.departure , disabled: true }, Validators.required],
-        currentStation: ['', Validators.required],
-        distance: ['', Validators.required],
-      });
-    } else {
-      return this.fb.group({
-        previousStation: [{ value : this.busForm.value.route[this.routeArray.length - 1].currentStation , disabled: true}, Validators.required],
-        currentStation: ['', Validators.required],
-        distance: ['', Validators.required],
-      });
-      
+
+  selectRoute(e: MatSelectChange) {
+    const route = e.value;
+
+    const R = this.routes.find(r => r.routeName === route);
+    if (!R) {
+      return;
     }
+
+    this.stations = R.stations;
+
+    let [departure, destination] = route.split(' - ');
+
+    const departureCamelCase = this.toCamelCase(departure.trim());
+    const destinationCamelCase = this.toCamelCase(destination.trim());
+
+    this.departureStation = destinationCamelCase;
+    this.destinationStation = departureCamelCase;
+
+    Promise.all([
+      firstValueFrom(this.stationService.getstationbyFilter(departureCamelCase)),
+      firstValueFrom(this.stationService.getstationbyFilter(destinationCamelCase))
+    ])
+      .then(([departureRes, destinationRes]) => {
+        const departureStation = (departureRes.data as Istation).station;
+        const destinationStation = (destinationRes.data as Istation).station;
+
+        if (this.busForm) {
+          this.busForm.patchValue({
+            departure: departureStation,
+            destination: destinationStation
+          });
+        }
+      })
+      .catch((err) => {
+        console.error('Error fetching station data:', err);
+        Swal.fire({
+          title: 'Error',
+          text: 'Please enter a proper Route Name where we have stations.',
+          icon: 'error',
+          confirmButtonText: 'Okay'
+        });
+      });
   }
 
-  addRoute() {
-    
-    if (this.routeArray.valid && this.busForm.controls['busNumber'].valid && this.busForm.controls['departure'].valid && this.busForm.controls['departureTime'].valid && this.busForm.controls['TotalSeat'].valid && this.busForm.controls['charge'].valid) {
 
 
-      this.routeArray.push(this.createRoute());
 
-      if (this.routeArray.length == 1) {
-        this.routeArray.at(this.routeArray.length - 1).patchValue({
-          previousStation: this.busForm.value.departure
+  toCamelCase(str: string) {
+    return str
+      .split(' ')
+      .map((word, index) => {
+        if (index === 0) {
+          return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+        }
+        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+      })
+      .join('');
+  }
+
+  get stopArray() {
+    return (this.busForm.get('stops') as FormArray);
+  }
+
+  createStops(): FormGroup {
+    return this.fb.group({
+      station: ['', Validators.required],
+      distance: ['', Validators.required]
+    });
+
+
+  }
+
+  addStop() {
+    console.log(this.stopArray.valid && this.busForm.controls['busNumber'].valid && this.busForm.controls['route'].valid && this.busForm.controls['departureTime'].valid && this.busForm.controls['TotalSeat'].valid && this.busForm.controls['charge'].valid);
+
+    if (this.busForm.controls['busNumber'].valid && this.busForm.controls['route'].valid && this.busForm.controls['departureTime'].valid && this.busForm.controls['TotalSeat'].valid && this.busForm.controls['charge'].valid) {
+
+      if (this.stopArray.length === 0) {
+        this.stopArray.push(this.createStops());
+        this.stopArray.at(this.stopArray.length - 1).patchValue({
+          station: this.busForm.value.departure
         });
-       
-      } else {        
-        this.routeArray.at(this.routeArray.length - 1).patchValue({
-          previousStation: this.busForm.value.route[this.routeArray.length - 2].currentStation
+        this.stopArray.push(this.createStops());
+        this.stopArray.at(this.stopArray.length - 1).patchValue({
+          station: this.busForm.value.destination
         });
+      }else{
+
+      this.stopArray.insert(this.stopArray.length - 1, this.createStops());
+
       }
     } else {
       Object.values(this.busForm.controls).forEach(control => {
         control.markAsTouched();
       });
 
-      this.routeArray.controls.forEach(control => {
+      this.stopArray.controls.forEach(control => {
         if (control instanceof FormGroup) {
           Object.values(control.controls).forEach(innerControl => {
             innerControl.markAsTouched();
@@ -118,8 +193,8 @@ export class AddBusComponent {
 
 
   deleteRoute(index: number) {
-    if (this.routeArray.length > 1) {
-      this.routeArray.removeAt(index);
+    if (this.stopArray.length > 1) {
+      this.stopArray.removeAt(index);
     } else {
       Swal.fire({
         icon: "error",
@@ -137,15 +212,16 @@ export class AddBusComponent {
       this.busForm.patchValue({
         _id: this.cloneBus._id,
         busNumber: this.cloneBus.busNumber,
+        route: this.cloneBus.route,
         departure: this.cloneBus.departure,
         departureTime: this.cloneBus.departureTime,
         destination: this.cloneBus.destination,
         TotalSeat: this.cloneBus.TotalSeat,
         charge: this.cloneBus.charge,
       });
-      this.cloneBus.route.forEach((item: any) => {
-        this.addRoute();
-        this.routeArray.at(this.routeArray.length - 1).patchValue({
+      this.cloneBus.stops.forEach((item: any) => {
+        this.addStop();
+        this.stopArray.at(this.stopArray.length - 1).patchValue({
           previousStation: item.previousStation,
           currentStation: item.currentStation,
           distance: item.distance
@@ -157,6 +233,44 @@ export class AddBusComponent {
     }
   }
 
+  selectStation(e: MatSelectChange, index: number) {
+    const input = e;
+    const station = input.value;
+  
+    if (!station) {
+      return;
+    }
+    
+    const selectedFormGroup = this.stopArray.at(index) as FormGroup;
+    
+  
+    const isDuplicate = this.stopArray.controls.some((control: AbstractControl) => {
+      const formGroup = control as FormGroup;
+      return formGroup.get('station')?.value === station && formGroup !== selectedFormGroup;
+    });
+  
+    const isReserved = station === this.departureStation || station === this.destinationStation;
+  
+    if (isDuplicate) {
+      selectedFormGroup.get('station')?.setValue("");
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Duplicate Selection',
+        detail: 'This station has already been selected.'
+      });
+      return;
+    } else if (isReserved) {
+      selectedFormGroup.get('station')?.setValue("");
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Station Reserved',
+        detail: 'This station is reserved for departure or destination.'
+      });
+      return;
+    }
+    selectedFormGroup.get('station')?.setValue(station);
+  }
+
   ngOnDestroy() {
     this.subscription.unsubscribe();
   }
@@ -164,18 +278,11 @@ export class AddBusComponent {
 
   onSubmit() {
 
-    if (this.routeArray && this.routeArray.length > 0) {
-      const lastIndex = this.routeArray.length - 1;
-      const lastRoute = this.routeArray.at(lastIndex) as FormGroup;
+    console.log(this.busForm.value);
 
 
-      if (lastRoute && lastRoute.get('currentStation')) {
-        const currentStationValue = lastRoute.get('currentStation')?.value ?? '';
+    if (this.stopArray && this.stopArray.length > 0) {
 
-        this.busForm.patchValue({
-          destination: currentStationValue
-        });
-      }
     }
     else {
       this.routeValid = false;

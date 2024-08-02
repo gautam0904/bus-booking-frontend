@@ -1,33 +1,41 @@
 <app-loading *ngIf="loading"></app-loading>
-<div *ngIf="!loading" class="container full-height d-flex justify-content-center align-items-center">
-    <div class="login-form w-lg-25 w-mg-50">
-        <div>
-            <form [formGroup]="loginform" (ngSubmit)="onsubmit()">
-                <label class="fs-3 fw-1" for="chk" aria-hidden="true">Log in</label>
-
-
-                <div class="form-floating">
-                    <input [ngClass]="{'form-control my-2' : true, 'border-danger' : loginform.controls['email'].invalid && loginform.controls['email'].touched }" type="email" formControlName="email" placeholder="" required="">
-
-                    <div class="text-danger" *ngIf="loginform.controls['email'].invalid && loginform.controls['email'].touched"> Please provide
-                        email address.</div>
-                    <label for="floatingTextarea">Email</label>
-                </div>
-
-                <div class="form-floating">
-                    <input [ngClass]="{'form-control my-2' : true, 'border-danger' : loginform.controls['password'].invalid && loginform.controls['password'].touched }" type="password" formControlName="password" placeholder="" required="">
-
-                <div class="text-danger" *ngIf="loginform.controls['password'].invalid && loginform.controls['password'].touched"> Please
-                    provide password.</div>
-                    <label for="floatingTextarea">Password</label>
-                </div>
-
-               
-
-                <a class="text-decoration-none" routerLink="/auth/signup">Create an account</a>
-
-                <button class="button-primary" type="submit">Log in</button>
-            </form>
-        </div>
-    </div>
-</div>
+<div class="login-form">
+    <mat-card class="login-card">
+        <mat-card-header>
+          <mat-card-title>Log in</mat-card-title>
+        </mat-card-header>
+      
+        <mat-card-content>
+          <form [formGroup]="loginform" (ngSubmit)="onsubmit()">
+            
+            <!-- Email Field -->
+            <mat-form-field appearance="fill" class="w-100 m-1">
+              <mat-label>Email</mat-label>
+              <input matInput formControlName="email" type="email" placeholder="Email" required>
+              <mat-error *ngIf="loginform.get('email')?.invalid && loginform.get('email')?.touched">
+                Please provide a valid email address.
+              </mat-error>
+            </mat-form-field>
+      
+            <!-- Password Field -->
+            <mat-form-field appearance="fill" class="w-100 m-1">
+              <mat-label>Password</mat-label>
+              <input matInput formControlName="password" type="password" placeholder="Password" required>
+              <mat-error *ngIf="loginform.get('password')?.invalid && loginform.get('password')?.touched">
+                Please provide a password.
+              </mat-error>
+            </mat-form-field>
+      
+            <!-- Actions -->
+            <div class="login-actions">
+              <a mat-button routerLink="/auth/signup">Create an account</a>
+            </div>
+            <div class="login-actions">
+              <button mat-raised-button color="primary" type="submit" [disabled]="loginform.invalid">Log in</button>
+            </div>
+          </form>
+        </mat-card-content>
+      </mat-card>
+      
+  </div>
+  

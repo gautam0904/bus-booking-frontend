@@ -1,9 +1,26 @@
 
-.form {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    padding: 20px;
+
+.container {
+  padding: 0;
+}
+
+.mat-form-field {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+mat-card-title {
+  margin-bottom: 20px;
 }
 
 .signup-form{

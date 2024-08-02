@@ -45,6 +45,8 @@ export class StationService {
           icon: "error",
           title: "Error...",
           text: error.message || 'An error occurred',
+          showConfirmButton : false,
+          timer: 2000
         });
         throw error;
       })

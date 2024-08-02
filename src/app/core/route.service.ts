@@ -57,7 +57,7 @@ export class RouteService {
       catchError((error) => {
         Swal.fire({
           icon: "error",
-          title: "Oops...",
+          title: "Error...",
           text: error.message || 'An error occurred',
         });
         throw error;

@@ -1,27 +1,83 @@
-<div class="row m-3">
-  <div class="col-lg-6">
-    <button *ngIf="!loading" routerLink="/search-bus" class="btn btn-primary"><i class="fa-solid fa-magnifying-glass-location"></i> Serch Bus </button>
-  </div>
-  <div class="col-lg-6">
-    <button *ngIf="role === 'admin' && !loading " (click)="addbus()" class="btn btn-primary"><i class="fa-solid fa-bus-simple"></i> Add bus</button>
-  </div>
-</div>
+<mat-card class="dashboard-card">
+  <mat-card-header>
+    <mat-card-title>Admin Dashboard</mat-card-title>
+  </mat-card-header>
 
-<div class="row m-3">
-  <div class="col-lg-6">
-    <button *ngIf="role === 'admin' && !loading " routerLink="/users"  class="btn btn-primary"><i class="fa-solid fa-users"></i> Users</button>
-  </div>
-  <div class="col-lg-6">
-    <button *ngIf="role === 'admin' && !loading " routerLink="/routes" class="btn btn-primary"><i class="fa-solid fa-route"></i> Route</button>
-  </div>
-</div>
+  <mat-card-content>
+    <div class="dashboard-container">
+      <!-- Bus Management -->
+      <mat-card class="dashboard-item">
+        <mat-card-header>
+          <mat-card-title>Bus Management</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="dashboard-buttons">
+            <button class="btn" *ngIf="!loading" mat-raised-button color="primary" routerLink="/search-bus">
+              <mat-icon>search</mat-icon> Search Bus
+            </button>
+            <button *ngIf="role === 'admin' && !loading" mat-raised-button color="primary" (click)="addbus()">
+              <mat-icon>directions_bus</mat-icon> Add Bus
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
 
-<div class="row m-3">
-  <div class="col-lg-6">
-    <button *ngIf="role === 'admin' && !loading " routerLink="/users"  class="btn btn-primary"><i class="fa-solid fa-ticket"></i> Bookings</button>
-  </div>
-  <div class="col-lg-6">
-    <button *ngIf="role === 'admin' && !loading " routerLink="/stations"  class="btn btn-primary"><i class="fa-brands fa-playstation"></i> Station</button>
-  </div>
+      <!-- User Management -->
+      <mat-card class="dashboard-item" *ngIf="role === 'admin' && !loading">
+        <mat-card-header>
+          <mat-card-title>User Management</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="dashboard-buttons">
+            <button class="btn" *ngIf="role === 'admin' && !loading" mat-raised-button color="primary" routerLink="/users">
+              <mat-icon>people</mat-icon> Users
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
 
-</div>
+      <!-- Route Management -->
+      <mat-card class="dashboard-item" *ngIf="role === 'admin' && !loading">
+        <mat-card-header>
+          <mat-card-title>Route Management</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="dashboard-buttons">
+            <button class="btn" *ngIf="role === 'admin' && !loading" mat-raised-button color="primary" routerLink="/routes">
+              <mat-icon>route</mat-icon> Routes
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Bookings -->
+      <mat-card class="dashboard-item">
+        <mat-card-header>
+          <mat-card-title>Bookings</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="dashboard-buttons">
+            <button class="btn" *ngIf="!loading" mat-raised-button color="primary" routerLink="/bookings">
+              <mat-icon>confirmation_number</mat-icon> Bookings
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Stations -->
+       
+      <mat-card class="dashboard-item" *ngIf="role === 'admin' && !loading">
+        <mat-card-header>
+          <mat-card-title>Stations</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="dashboard-buttons">
+            <button class="btn" *ngIf="role === 'admin' && !loading" mat-raised-button color="primary" routerLink="/stations">
+              <mat-icon>location_on</mat-icon> Stations
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </mat-card-content>
+</mat-card>

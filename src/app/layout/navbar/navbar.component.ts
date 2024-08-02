@@ -20,12 +20,13 @@ export class NavbarComponent {
   searchForm !: FormGroup
 
   user !: Iuser
-
+role !: string;
 
 
   ngOnInit(): void {
     const user: Iuser = JSON.parse(localStorage.getItem('user') as string);
     this.user = user;
+    this.role = user.role;
   }
 
   logout() {

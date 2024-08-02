@@ -2,16 +2,19 @@
     height: 100vh;
 }
 
-.form {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    padding: 20px;
+
+.signup-card {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
 }
 
-.signup-form{
-  width: 50%;
+.signup-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
 }
+
 
 .form-floating>.form-control-plaintext~label::after, .form-floating>.form-control:focus~label::after, .form-floating>.form-control:not(:placeholder-shown)~label::after, .form-floating>.form-select~label::after {
   background-color : transparent !important;

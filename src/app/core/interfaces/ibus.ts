@@ -6,9 +6,9 @@ export interface Ibus {
     destination : string;
     TotalSeat : number;
     charge : number;
-    route :[{
-     previousStation : string;
-     currentStation : string;
+    route : string;
+    stops :[{
+     station : string;
      distance : number;
      arrivalTime : string;
     }]

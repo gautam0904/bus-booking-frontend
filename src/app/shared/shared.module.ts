@@ -1,18 +1,23 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LoadingComponent } from './loading/loading.component';
-
-
+import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [
-    LoadingComponent
+    LoadingComponent,
+    ConfirmationDialogComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    MatDialogModule,
+    MatIconModule
   ],
   exports: [
-    LoadingComponent
+    LoadingComponent,
+    ConfirmationDialogComponent
   ]
 })
 export class SharedModule { }

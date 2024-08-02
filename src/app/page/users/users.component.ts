@@ -3,6 +3,8 @@ import { MessageService } from 'primeng/api';
 import { Iuser } from 'src/app/core/interfaces/iuser';
 import { IuserGetApiResponse } from 'src/app/core/interfaces/iuser-get-api-response';
 import { AuthService } from 'src/app/core/services/auth.service';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationDialogComponent  } from'../../shared/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-users',
@@ -15,7 +17,8 @@ export class UsersComponent implements OnInit  {
   selectedUser: Iuser | null = null;
   constructor(
     private authService : AuthService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private dialog: MatDialog
   ){}
 
   ngOnInit(): void {
@@ -27,7 +30,20 @@ export class UsersComponent implements OnInit  {
   }
 
 
+  onDelete(user: any): void {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        summary: 'Are you sure you want to delete this user?',
+        detail: `You are about to delete ${user.name}. This action cannot be undone.`
+      }
+    });
 
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Perform the delete action
+      }
+    });
+  }
 
   onConfirm() {
     if (this.selectedUser) {

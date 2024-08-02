@@ -7,3 +7,20 @@
     height: 300;
     padding: 2%;
 }
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+  }
+  
+  mat-card {
+    width: 100%;
+    max-width: 400px;
+    margin: 1rem;
+  }
+  
+  mat-icon {
+    font-size: 2rem;
+  }
+  

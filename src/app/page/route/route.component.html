@@ -1,120 +1,113 @@
 <p-toast></p-toast>
 <app-loading *ngIf="loading"></app-loading>
 
-<div class="row justify-content-center m-5">
-  <button *ngIf="role === 'admin' && !loading && !isShowForm" (click)="isShowForm = true" class="bt btn btn-primary w-auto"><i class="fa-solid fa-bus-simple"></i> Add Route</button>
+<div class="row justify-content-center m-5 ">
+  <button *ngIf="role === 'admin' && !loading && !isShowForm" class="w-auto" (click)="isShowForm = true" mat-raised-button color="primary">
+    <mat-icon>directions_bus</mat-icon> Add Route
+  </button>
 </div>
+
 
 <div *ngIf="!loading && isShowForm" class="container full-height d-flex justify-content-center align-items-center">
-  <div class="signup-form">
-    <div>
-      <form [formGroup]="routeForm" (ngSubmit)="onSubmit()">
-        <div class="d-flex justify-content-end">
-          <button *ngIf="isedit" type="button" class="ms-auto mt-3 border-0 rounded bg-transparent" routerLink="/" (click)="this.routeForm.reset(); isedit=false;isShowForm = false;"><i class="pi pi-times"></i></button>
-        </div>
+  <mat-card class="signup-form">
+    <form [formGroup]="routeForm" (ngSubmit)="onSubmit()">
+      <mat-toolbar color="primary" class="mat-elevation-z4 my-4">
+        <span *ngIf="!isedit">Add Route</span>
+        <span *ngIf="isedit">Edit Route</span>
+        <button mat-icon-button routerLink="/" (click)="this.routeForm.reset(); isedit=false">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-toolbar>
 
-        <label class="fs-1 fw-1" for="chk" aria-hidden="true" *ngIf="!isedit">Add Route</label>
-        <label class="fs-3 fw-1" style="margin-top: 0;" aria-hidden="true" *ngIf="isedit">Edit Route</label>
+      <mat-form-field appearance="fill">
+        <mat-label>Route Name</mat-label>
+        <input matInput formControlName="routeName" (change)="setDepartureDestination($event)" placeholder="e.g. Ahmedabad - Surat" required>
+        <mat-error *ngIf="routeForm.get('routeName')?.hasError('required')">
+          Route Name is required.
+        </mat-error>
+        <mat-error *ngIf="routeForm.get('routeName')?.hasError('pattern')">
+          Route Name should be in proper format like Ahmedabad - Surat.
+        </mat-error>
+      </mat-form-field>
 
-        <div class="form-floating m-2">
-          <input [ngClass]="{'form-control':true , 'border-danger': routeForm.get('routeName')?.invalid && routeForm.get('routeName')?.touched}" for="routeName" type="text" formControlName="routeName" (change)="setDepartureDestination($event)" placeholder="" required="">
-       
-          <div class="text-danger" *ngIf="routeForm.get('routeName')?.hasError('required') && routeForm.get('routeName')?.touched">
-            Route Name is required .
+      <mat-form-field appearance="fill">
+        <mat-label>Total Distance</mat-label>
+        <input matInput formControlName="distance" type="number" placeholder="Distance in km" required>
+        <mat-error *ngIf="routeForm.get('distance')?.invalid && routeForm.get('distance')?.touched">
+          Distance is required and should be a number.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Departure</mat-label>
+        <input matInput formControlName="departure" placeholder="Departure location" required>
+      </mat-form-field>
+
+
+      <mat-form-field appearance="fill">
+        <mat-label>Destination</mat-label>
+        <input matInput formControlName="destination" placeholder="Destination location" required>
+      </mat-form-field>
+      <div formArrayName="stations">
+        <div *ngFor="let fieldGroup of stationArray.controls; let i = index" [formGroupName]="i">
+          <mat-form-field appearance="fill">
+            <mat-label>Route Station</mat-label>
+            <mat-select formControlName="station" (selectionChange)="selectStation($event, i)">
+              <mat-option *ngFor="let station of stations" [value]="station.station">
+                {{ station.station }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="fieldGroup.get('station')?.invalid && fieldGroup.get('station')?.touched">
+              Station is required.
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" style="margin: 0;">
+            <mat-label>Distance from Start Station</mat-label>
+            <input matInput formControlName="distanceFromStart" type="number" placeholder="Distance in km" required min="0">
+            <mat-error *ngIf="fieldGroup.get('distanceFromStart')?.invalid && fieldGroup.get('distanceFromStart')?.touched">
+              Distance from start is required.
+            </mat-error>
+          </mat-form-field>
+          <div class="text-danger" *ngIf="stationArray.errors?.['invalidDistance']">
+            The distance from start exceeds the total route distance.
           </div>
-
-          <div class="text-danger" *ngIf="routeForm.get('routeName')?.hasError('pattern') && routeForm.get('routeName')?.touched">
-            Route Name proper formet like Ahemdabad - Surat
+          <div class="text-warning " *ngIf="stationArray.errors?.['invalidSequence'] && i == stationArray.length -1">
+            Stations must be in increasing order of distance.
           </div>
-          <label for="floatingTextarea">Route Name</label>
+          
+
+          <button mat-raised-button class="my-2" color="warn" (click)="deleteStation(i)">Delete</button>
         </div>
+      </div>
 
-        <div class="form-floating m-2">
-
-          <input [ngClass]="{'form-control':true , 'border-danger': routeForm.get('distance')?.invalid && routeForm.get('distance')?.touched}" for="distance" type="number" formControlName="distance" placeholder="" required="">
-          <div class="text-danger" *ngIf="routeForm.get('distance')?.invalid && routeForm.get('distance')?.touched">
-            Distance is required and should be a number.
-          </div>
-          <label for="floatingTextarea">Total distance</label>
-        </div>
-
-
-        <div class="form-floating m-2">
-
-          <input [ngClass]="{'form-control':true , 'border-danger': routeForm.get('departure')?.invalid && routeForm.get('departure')?.touched}" for="departure" type="text" formControlName="departure" placeholder="" required="">
-          <label for="floatingTextarea">Departure</label>
-        </div>
-        
-        <div class="form-floating m-2">
-          <input [ngClass]="{'form-control':true , 'border-danger': routeForm.get('destination')?.invalid && routeForm.get('destination')?.touched}" for="destination" type="text" formControlName="destination" placeholder="" required="">
-
-          <label for="floatingTextarea">Destination</label>
-        </div>
-
-        <div formArrayName="stations">
-          <div *ngFor="let fieldGroup of stationArray.controls; let i = index" [formGroupName]="i">
-            <div class="form-floating">
-              <select [ngClass]="{'form-control': true, 'border-danger': fieldGroup.get('station')?.invalid && fieldGroup.get('station')?.touched}" formControlName="station" (change)="selectStation($event , i)" data-show-subtext="true" data-live-search="true">
-                <option class="bg-black" *ngFor="let station of stations" [value]="station._id">{{ station.station }}</option>
-              </select>
-              <div class="text-danger" *ngIf="fieldGroup.get('station')?.invalid && fieldGroup.get('station')?.touched">
-                Station is required.
-              </div>
-              <label for="floatingTextarea">Route Station</label>
-            </div>
-            <div class="form-floating">
-              <input [ngClass]="{'form-control': true, 'border-danger': fieldGroup.get('distanceFromStart')?.invalid && fieldGroup.get('distanceFromStart')?.touched}" formControlName="distanceFromStart" type="number" placeholder="" required min="0">
-              <div class="text-danger" *ngIf="fieldGroup.get('distanceFromStart')?.invalid && fieldGroup.get('distanceFromStart')?.touched">
-                Distance from start is required.
-              </div>
-              <label for="floatingTextarea">Distance from start Station</label>
-            </div>
-            <button type="button" class="btn btn-danger" (click)="deleteStation(i)">Delete</button>
-          </div>
-        </div>
-        
-        <button type="button" class="btn btn-primary my-1" (click)="addStation()">Add Stop</button>
+      <button mat-stroked-button class="secondary-button" type="button" (click)="addStation()">Add Stop</button>
      
-
-        <button class="button-primary" type="submit"><i *ngIf="!isedit">Add Route</i><i *ngIf="isedit">Update Route</i></button>
-      </form>
-    </div>
-  </div>
-</div>
-
-
-
-
-<div class="d-flex justify-content-center">
-  
-</div>
-
-
-
-
-
-
-
-
-<div *ngIf="!loading" class="d-flex flex-wrap gap-3 mt-5 container">
-  <div class="card post p-3" *ngFor="let r of routes">
-    <div>
-      <i class="fa-solid fa-bus-simple fa-2x"></i>
-    </div>
-    <div>
-      <div class="title fs-2 fw-1">
-        {{r.routeName}}
+      <div class="form-actions d-flex justify-content-end">
+        <button mat-raised-button color="primary" type="submit">
+          <span *ngIf="!isedit">Add Route</span>
+          <span *ngIf="isedit">Update Route</span>
+        </button>
       </div>
-
-
-
-      <div class="d-flex justify-content-between mt-2">
-        <button *ngIf="role === 'admin'" class="text-danger btn" (click)="ondelete(r)"><i class="fa-regular fa-trash-can fa-2x"></i></button>
-        <button type="button" class="btn" (click)="selectRoute(r)" data-bs-toggle="modal" data-bs-target="#exampleModal"><i class="fa-solid fa-route fa-2x"></i></button>
-      </div>
-    </div>
-  </div>
+    </form>
+  </mat-card>
 </div>
+
+<div *ngIf="!loading  && !isShowForm" class="d-flex flex-wrap gap-3 mt-5 container">
+  <mat-card *ngFor="let r of routes" class="post">
+    <mat-icon>directions_bus</mat-icon>
+    <mat-card-title>{{ r.routeName }}</mat-card-title>
+    <mat-card-actions>
+      <button *ngIf="role === 'admin'" mat-icon-button color="warn" (click)="ondelete(r)">
+        <mat-icon>delete</mat-icon>
+      </button>
+      <button mat-icon-button color="primary" (click)="selectRoute(r)" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        <i class="fa-solid fa-route "></i>
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>
+
 
 
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -135,12 +128,12 @@
                   <mat-list-item class="item d-flex justify-content-center align-items-center">
                     <div class="item-content d-flex">
 
-                        <div class="title">
-                          <div matLine >
-                            <span class="me-1"></span>
-                          </div>
+                      <div class="title" [style]="'width: 35px'">
+                        <div matLine>
+                          <span class="me-4"></span>
                         </div>
-                    
+                      </div>
+
                       <div class="info">
                         <div class="title">
                           <div matLine>
@@ -149,37 +142,48 @@
                         </div>
                       </div>
                       <div class="title">
-                        <div matLine >
-                          <span class="me-1">Arrival Time </span>
+                        <div matLine>
                           <span>Distance</span>
                         </div>
                       </div>
                     </div>
 
                   </mat-list-item>
-                  
+
                 </mat-list>
 
                 <mat-list>
-                  <mat-list-item class="item d-flex justify-content-center align-items-center" *ngFor="let station of clonedRoute?.stations">
+                  <mat-list-item class="item d-flex justify-content-center align-items-center" *ngFor="let station of clonedRoute.stations ; let i = index">
                     <div class="item-content d-flex">
-                      <div class="circle ontime">
-                        <mat-icon matListItemIcon></mat-icon>
+                    
+                      <div class="route-container">
+                        <div class="circle-container">
+                         
+                          <div class="circle ontime">
+                            <mat-icon matListItemIcon></mat-icon>
+                          </div>
+                          
+                        </div>
+                      
                       </div>
+
                       <div class="info">
                         <div class="title">
                           <div matLine>
-                            <span>{{ station.station }}</span>
+                            <span>{{ station.stationName }}</span>
                           </div>
                         </div>
                       </div>
-                    
+                      <div class="title">
+                        <div matLine>
+                          <span>{{ station.distanceFromStart }}</span>
+                        </div>
+                      </div>
                     </div>
-
                   </mat-list-item>
-                  
+
                 </mat-list>
-                
+
               </div>
             </mat-card-content>
           </mat-card>
@@ -188,124 +192,3 @@
     </div>
   </div>
 </div>
-
-
-
-<!-- 
-
-
-<div *ngIf="!loading" class="container full-height d-flex justify-content-center align-items-center">
-  <div class="signup-form">
-    <div>
-      <form [formGroup]="busForm" (ngSubmit)="onSubmit()">
-        <button *ngIf="isedit" type="button" class="ms-auto mt-3 border-0 rounded bg-transparent" routerLink="/" (click)="this.busForm.reset(); isedit=false"><i class="pi pi-times"></i></button>
-
-        <label class="fs-1 fw-1" for="chk" aria-hidden="true" *ngIf="!isedit">Add Bus</label>
-        <label class="fs-3 fw-1" style="margin-top: 0;" aria-hidden="true" *ngIf="isedit">Edit Bus</label>
-
-        <div class="form-floating">
-          <input [ngClass]="{'form-control':true , 'border-danger': busForm.get('busNumber')?.invalid && busForm.get('busNumber')?.touched}" for="busNumber" type="text" formControlName="busNumber" placeholder="" required="">
-
-          <div class="text-danger" *ngIf="busForm.get('busNumber')?.hasError('pattern') && busForm.get('busNumber')?.touched">
-            Bus Number proper formet like GJ 17 PD 2424.
-          </div>
-          <div class="text-danger" *ngIf="busForm.get('busNumber')?.hasError('required') && busForm.get('busNumber')?.touched">
-            Bus Number is required.
-          </div>
-
-          <label for="floatingTextarea">Bus busNumber</label>
-        </div>
-
-        <div class="form-floating">
-          <input [ngClass]="{'form-control':true , 'border-danger': busForm.get('departure')?.invalid && busForm.get('departure')?.touched}" for="departure" type="text" formControlName="departure" placeholder="" required="">
-
-          <div class="text-danger" *ngIf="busForm.get('departure')?.invalid && busForm.get('departure')?.touched">
-            departure is required .
-          </div>
-
-          <label for="floatingTextarea">Bus departure</label>
-        </div>
-
-        <div class="form-floating">
-          <input [ngClass]="{'form-control': true , 'border-danger' : busForm.get('departureTime')?.invalid && busForm.get('departureTime')?.touched}" for="departureTime" type="time" formControlName="departureTime" required="">
-
-          <div class="text-danger" *ngIf="busForm.get('departureTime')?.invalid && busForm.get('departureTime')?.touched">
-            departureTime is required.
-          </div>
-
-          <label for="floatingTextarea">Departure Time</label>
-        </div>
-
-        <div class="form-floating">
-          <input [ngClass]="{'form-control' : true , 'border-danger' : busForm.get('TotalSeat')?.invalid && busForm.get('TotalSeat')?.touched}" for="TotalSeat" type="number" formControlName="TotalSeat" placeholder="" required="">
-
-          <div class="text-danger" *ngIf="busForm.get('TotalSeat')?.hasError('seatRange') && busForm.get('TotalSeat')?.touched">
-            Total Seat of bus should be minimum 0 and maximum 50.
-          </div>
-          <div class="text-danger" *ngIf="busForm.get('TotalSeat')?.hasError('required') && busForm.get('TotalSeat')?.touched">
-            Total Seat of bus is required.
-          </div>
-
-          <label for="floatingTextarea">Bus TotalSeat</label>
-        </div>
-
-        <div class="form-floating">
-          <input [ngClass]="{
-              'form-control': true,
-              'border-danger': busForm.get('charge')?.invalid && busForm.get('charge')?.touched
-            }" id="charge" type="number" formControlName="charge" placeholder="" required />
-
-          <div class="text-danger" *ngIf="busForm.get('charge')?.invalid && busForm.get('charge')?.touched">
-            Charge is required.
-          </div>
-
-          <label for="floatingTextarea">Bus charge &#x20b9; / km </label>
-        </div>
-
-        <div formArrayName="route">
-          <div *ngFor="let fieldGroup of routeArray.controls; let i = index" [formGroupName]="i">
-            <div class="form-floating">
-              <input [ngClass]="{'form-control': true, 'border-danger': fieldGroup.get('previousStation')?.invalid && fieldGroup.get('previousStation')?.touched}" formControlName="previousStation" type="text" placeholder="">
-
-              <div class="text-danger" *ngIf="fieldGroup.get('previousStation')?.invalid && fieldGroup.get('previousStation')?.touched">
-                Previous Station is required.
-              </div>
-
-              <label for="floatingTextarea">Bus Previous Station</label>
-            </div>
-
-            <div class="form-floating">
-              <input [ngClass]="{'form-control': true, 'border-danger': fieldGroup.get('currentStation')?.invalid && fieldGroup.get('currentStation')?.touched}" formControlName="currentStation" type="text" placeholder="" required>
-
-              <div class="text-danger" *ngIf="fieldGroup.get('currentStation')?.invalid && fieldGroup.get('currentStation')?.touched">
-                Current Station is required.
-              </div>
-
-              <label for="floatingTextarea">Bus Current Station</label>
-            </div>
-
-            <div class="form-floating">
-              <input [ngClass]="{'form-control': true, 'border-danger': fieldGroup.get('distance')?.invalid && fieldGroup.get('distance')?.touched}" formControlName="distance" type="number" placeholder="" required>
-
-              <div class="text-danger" *ngIf="fieldGroup.get('distance')?.invalid && fieldGroup.get('distance')?.touched">
-                Distance is required.
-              </div>
-
-              <label for="floatingTextarea">Distance from previous Station</label>
-            </div>
-
-            <button type="button" class="btn btn-danger" (click)="deleteRoute(i)" *ngIf="routeArray.length > 1">Delete</button>
-          </div>
-        </div>
-
-        <button type="button" class="btn btn-primary my-1" (click)="addRoute()">Add Field</button>
-        <div class="text-danger" *ngIf="!routeValid">
-          you need to add atleastone route of bus
-        </div>
-
-        <button class="button-primary" type="submit"><i *ngIf="!isedit">Add Bus</i><i *ngIf="isedit">Update</i></button>
-
-      </form>
-    </div>
-  </div>
-</div> -->

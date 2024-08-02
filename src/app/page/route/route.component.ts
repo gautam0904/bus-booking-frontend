@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatSelectChange } from '@angular/material/select';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { catchError, forkJoin, map, Subscription } from 'rxjs';
@@ -27,9 +28,9 @@ export class RouteComponent implements OnInit {
   routeForm!: FormGroup;
   isedit = false;
   stations: Istation[] = [];
-  departureId: string | undefined;
-  destinationId: string | undefined;
-  clonedRoute: Iroute | undefined;
+  departureStation : string | undefined;
+  destination : string | undefined;
+  clonedRoute !: Iroute;
   elemenatedStation: [{ index: number, station: Istation }] | undefined;
   private subscription: Subscription = new Subscription();
 
@@ -38,7 +39,8 @@ export class RouteComponent implements OnInit {
     private messageService: MessageService,
     private fb: FormBuilder,
     private router: Router,
-    private stationService: StationService
+    private stationService: StationService,
+    private cdr: ChangeDetectorRef
   ) {
     this.role = JSON.parse(localStorage.getItem('user') as string).role;
     this.routeForm = this.fb.group({
@@ -47,7 +49,7 @@ export class RouteComponent implements OnInit {
       destination: [{ value: "", disabled: true }, Validators.required],
       distance: ["", Validators.required],
       routeName: ["", [Validators.required, Validators.pattern('^[A-Za-z]+ - [A-Za-z]+$')]],
-      stations: this.fb.array([])
+      stations: this.fb.array([], this.validateStations())
     });
   }
 
@@ -76,74 +78,112 @@ export class RouteComponent implements OnInit {
       const input = e.target as HTMLInputElement;
       const routeName = input.value;
       let [departure, destination] = routeName.split(' - ');
-
+  
       const departure$ = this.stationService.getstationbyFilter(this.toCamelCase(departure));
       const destination$ = this.stationService.getstationbyFilter(this.toCamelCase(destination));
-
+  
       forkJoin([departure$, destination$]).pipe(
         map(([departureRes, destinationRes]) => {
           const departureStation = (departureRes.data as Istation).station;
-          this.departureId = (departureRes.data as Istation)._id;
           const destinationStation = (destinationRes.data as Istation).station;
-          this.destinationId = (destinationRes.data as Istation)._id;
-
+  
+          this.departureStation = departureStation;
+          this.destination = destinationStation;
+ 
           while (this.stationArray.length > 0) {
             this.stationArray.removeAt(0);
           }
-
+  
           this.routeForm.patchValue({
             departure: departureStation,
             destination: destinationStation
           });
-          this.stations = this.stations.filter(s => s._id !== this.departureId && s._id !== this.destinationId);
         }),
         catchError(error => {
-          this.routeForm.get('routeName')?.setValue('')
+          Swal.fire({
+            title: 'Error',
+            text: 'Please enter a proper Route Name where we have stations.',
+            icon: 'error',
+            confirmButtonText: 'Okay'
+          });
+          this.routeForm.get('routeName')?.setValue('');
           return [];
         })
       ).subscribe();
     }
   }
-
-
-  selectStation(e: Event, index: number) {
-    const input = e.target as HTMLSelectElement; // Ensure it's HTMLSelectElement
-    const stationId = input.value;
   
-    // If no station is selected, do nothing
-    if (!stationId) {
+  selectStation(e: MatSelectChange, index: number) {
+    const input = e;
+    const station = input.value;
+  
+    if (!station) {
       return;
     }
-  
-    // Handle station update if it's already selected
+    
     const selectedFormGroup = this.stationArray.at(index) as FormGroup;
-    const currentStationId = selectedFormGroup.get('station')?.value;
+    
   
-    if (currentStationId === stationId) {
-      // If selecting the same station again, update the form control
-      return;
-    }
-  
-    // Check if the station is already selected in other fields
     const isDuplicate = this.stationArray.controls.some((control: AbstractControl) => {
       const formGroup = control as FormGroup;
-      return formGroup.get('station')?.value === stationId && formGroup !== selectedFormGroup;
+      return formGroup.get('station')?.value === station && formGroup !== selectedFormGroup;
     });
   
+    const isReserved = station === this.departureStation || station === this.destination;
+  
     if (isDuplicate) {
-      this.messageService.add({ severity: 'error', summary: 'Duplicate Selection', detail: 'This station has already been selected.' });
-      input.value = ''; // Clear the selection
+      selectedFormGroup.get('station')?.setValue("");
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Duplicate Selection',
+        detail: 'This station has already been selected.'
+      });
+      return;
+    } else if (isReserved) {
+      selectedFormGroup.get('station')?.setValue("");
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Station Reserved',
+        detail: 'This station is reserved for departure or destination.'
+      });
       return;
     }
-  
-    // Update the selected station in the form group
-    selectedFormGroup.patchValue({ station: stationId });
-  
-    // Remove the selected station from the available list
-    this.stations = this.stations.filter(s => s._id !== stationId);
+    selectedFormGroup.get('station')?.setValue(station);
   }
   
+
+  validateStations(): (formArray: AbstractControl) => { [key: string]: boolean } | null {
+    return (formArray: AbstractControl): { [key: string]: boolean } | null => {
+      const controlArray = formArray as FormArray;
+      if (controlArray.length === 0) {
+        return null;
+      }
   
+      let previousDistance = 0;
+      const totalDistance = this.routeForm.get('distance')?.value || 0;
+  
+      for (let i = 0; i < controlArray.length; i++) {
+        const stationControl = controlArray.at(i) as FormGroup;
+        const distanceFromStart = stationControl.get('distanceFromStart')?.value;
+  
+        if (distanceFromStart > totalDistance) {
+          return { 'invalidDistance': true };
+        }
+  
+        if (i > 0) {
+          const previousStationControl = controlArray.at(i - 1) as FormGroup;
+          const previousDistanceFromStart = previousStationControl.get('distanceFromStart')?.value;
+  
+          if (distanceFromStart <= previousDistanceFromStart) {
+            return { 'invalidSequence': true };
+          }
+        }
+  
+        previousDistance = distanceFromStart;
+      }
+      return null;
+    };
+  }
   
 
 
@@ -151,18 +191,18 @@ export class RouteComponent implements OnInit {
     return this.fb.group({
       station: ['', Validators.required],
       order: ['', Validators.required],
-      distanceFromStart: ['', Validators.required],
+      distanceFromStart: ['', [Validators.required, Validators.min(0)]],
     });
   }
 
   addStation() {
+    this.stationArray.updateValueAndValidity();
 
     if (this.stationArray.valid && this.routeForm.controls['routeName'].valid) {
 
-      const newStationIndex = this.stationArray.length - 1;
-      this.stationArray.insert(newStationIndex, this.createStation());
-      this.stationArray.at(newStationIndex).patchValue({
-        order: this.stationArray.length 
+      this.stationArray.push(this.createStation());
+      this.stationArray.at(this.stationArray.length -1).patchValue({
+        order: this.stationArray.length
       });
 
     } else {
@@ -183,21 +223,17 @@ export class RouteComponent implements OnInit {
 
 
   deleteStation(index: number) {
-    if (this.stationArray.length > 1 && index !== this.stationArray.length - 1) {
-      const removedStationId = this.stationArray.at(index).get('station')?.value;
-      
-      // Restore the removed station to the available list
-      if (removedStationId) {
-        const removedStation = this.stations.find(s => s._id === removedStationId);
-        if (removedStation) {
-          this.stations.push(removedStation);
-        }
+    const removedStationId = this.stationArray.at(index).get('station')?.value;
+
+    if (removedStationId) {
+      const removedStation = this.stations.find(s => s._id === removedStationId);
+      if (removedStation) {
+        this.stations.push(removedStation);
       }
-      
-      this.stationArray.removeAt(index);
     }
+    this.stationArray.removeAt(index);
   }
-  
+
 
   setInitialValues() {
     if (this.selectedRoute) {
@@ -229,7 +265,7 @@ export class RouteComponent implements OnInit {
 
 
   selectRoute(route: Iroute) {
-    this.clonedRoute = route;
+    this.clonedRoute = route;    
   }
 
 
@@ -289,34 +325,58 @@ export class RouteComponent implements OnInit {
   onSubmit() {
     if (this.routeForm.valid) {
       this.loading = true;
+
       this.stationArray.insert(0, this.createStation());;
       this.stationArray.at(0).patchValue({
-        station: this.departureId,
+        station: this.departureStation,
         order: 0,
         distanceFromStart: 0
       });
 
       this.stationArray.push(this.createStation());
-      this.stationArray.at(this.stationArray.length -1).patchValue({
-        station: this.destinationId,
+      this.stationArray.at(this.stationArray.length - 1).patchValue({
+        station: this.destination,
         order: this.stationArray.length - 1,
         distanceFromStart: this.routeForm.get('distance')?.value
       });
 
+      const stationsArrayWithIds = (this.routeForm.get('stations') as FormArray).controls.map(control => {
+        const stationId = this.stations.find(s => s.station === (control.get('station') as FormControl).value) ;
+        return {
+            station: stationId,
+            order: (control.get('order') as FormControl).value,
+            distanceFromStart: (control.get('distanceFromStart') as FormControl).value
+        };
+    });
 
 
-      this.convertFormValuesToCamelCase(this.routeForm);
 
+
+
+
+
+      const formValue = {
+        ...this.routeForm.value,
+        stations: stationsArrayWithIds
+    };
+    console.log(formValue);
+    
       const submitObservable = this.isedit ?
-        this.routeService.updateRoute(this.routeForm.getRawValue()) :
-        this.routeService.createRoute(this.routeForm.getRawValue());
+        this.routeService.updateRoute(formValue) :
+        this.routeService.createRoute(formValue);
 
 
       this.subscription.add(
         submitObservable.subscribe({
           next: (res: IrouteCreateResponse) => {
             delete this.selectedRoute;
+            this.loading = false;
+            this.isShowForm = false;
+            this.isedit = false;
+            this.routeForm.reset();
+            (this.routeForm.get('stations') as FormArray).clear();
             this.messageService.add({ severity: 'success', summary: 'Success', detail: res.message });
+            this.router.navigate(['/routes'])
           },
           complete: () => {
             this.loading = false;
@@ -330,27 +390,6 @@ export class RouteComponent implements OnInit {
         control.markAsTouched();
       });
     }
-
-  }
-
-  convertFormValuesToCamelCase(formGroup: FormGroup) {
-    Object.keys(formGroup.controls).forEach(controlName => {
-      const control = formGroup.get(controlName);
-
-      if (control instanceof FormGroup) {
-        this.convertFormValuesToCamelCase(control);
-      } else if (control instanceof FormArray) {
-        control.controls.forEach(formGroupControl => {
-          if (formGroupControl instanceof FormGroup) {
-            this.convertFormValuesToCamelCase(formGroupControl);
-          }
-        });
-      } else if (control instanceof FormControl) {
-        if (typeof control.value === 'string') {
-          control.setValue(this.toCamelCase(control.value));
-        }
-      }
-    });
 
   }
 
