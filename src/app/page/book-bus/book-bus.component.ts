@@ -97,7 +97,13 @@ export class BookBusComponent implements OnInit {
 
 
   toggleSeat(seat: number): void {
-    this.selectedSeats.push(seat);
+
+    if (this.selectedSeats.includes(seat)) {
+      this.selectedSeats = this.selectedSeats.filter(s => s!== seat);
+    } else {
+      this.selectedSeats.push(seat);
+    }
+    
     if(this.selectedSeats.length == this.bookUser?.seat){
       
       this.sharedService.setseatData(this.selectedSeats)

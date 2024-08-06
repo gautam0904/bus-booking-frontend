@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -38,7 +38,7 @@ export class SearchBusComponent {
     this.searchBusForm = this.fb.group({
       departure: ['', Validators.required],
       destination: ['', Validators.required],
-      bookingDate: ['', Validators.required],
+      bookingDate: ['', [Validators.required, this.dateNotPastValidator()]],
       seat: ['', Validators.required],
       isSingleLady: ['']
     });
@@ -47,11 +47,23 @@ export class SearchBusComponent {
   ngOnInit(): void {
     const today = new Date();
     this.minDate = today.toISOString().split('T')[0];
+    this.role = JSON.parse(localStorage.getItem("user") as string).role
     }
 
   onbusUpdate(bus: Ibus) {
     this.sharedService.setBusData(bus);
     this.router.navigate(['/add-bus']);
+  }
+
+  dateNotPastValidator(): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: any } | null => {
+      const today = new Date();
+      const selectedDate = new Date(control.value);
+  
+      return selectedDate < today
+        ? { 'datePast': 'The booking date cannot be in the past' }
+        : null;
+    };
   }
 
   singleLady(e: MatCheckboxChange) {
@@ -102,6 +114,7 @@ export class SearchBusComponent {
 
 
   bookBus(bus: Ibus) {
+    
     if (this.searchBusForm) {
       const bookedbus: Ibus = {
         _id: bus._id,
@@ -112,8 +125,10 @@ export class SearchBusComponent {
         charge: bus.charge,
         route: bus.route,
         stops : bus.stops,
-        departureTime: new Date().toISOString()
+        departureTime: bus.stops.find(st => st.stationName === this.searchBusForm.get('departure')?.value )?.arrivalTime || ""
       }
+      console.log(bookedbus);
+      
       this.sharedService.setBookBusData(bookedbus)
       this.searching = false
       this.router.navigate(['/bus-book']);
@@ -122,7 +137,6 @@ export class SearchBusComponent {
 
   selectBus(bus: Ibus) {
     this.selectedBus = bus;
-    
   }
 
   onSubmit() {
@@ -130,6 +144,10 @@ export class SearchBusComponent {
     this.searching = true;
     
     if (this.searchBusForm.get('departure')?.valid && this.searchBusForm.get('destination')?.valid && this.searchBusForm.get('bookingDate')?.valid) {
+      this.searchBusForm.patchValue({
+        departure : this.busService.toCamelCase(this.searchBusForm.get('departure')?.value),
+        destination : this.busService.toCamelCase(this.searchBusForm.get('destination')?.value)
+      })
       this.sharedService.setbookUserData({  
         seat : this.searchBusForm.get('seat')?.value,
         isSingleLady : this.searchBusForm.get('isSingleLady')?.value,

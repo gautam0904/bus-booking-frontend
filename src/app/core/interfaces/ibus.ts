@@ -11,5 +11,6 @@ export interface Ibus {
      station : string;
      distance : number;
      arrivalTime : string;
+     stationName ? : string
     }]
 }

@@ -55,7 +55,7 @@
 
       <mat-form-field appearance="fill">
         <mat-label>Charge &#x20b9; / km</mat-label>
-        <input matInput formControlName="charge" type="number">
+        <input matInput formControlName="charge" type="number" min="0">
         <mat-error *ngIf="busForm.get('charge')?.invalid && busForm.get('charge')?.touched">
           Charge is required.
         </mat-error>
@@ -66,15 +66,15 @@
           <mat-form-field appearance="fill">
             <mat-label>Stop Station</mat-label>
             <mat-select formControlName="station" (selectionChange)="selectStation($event, i)" >
-              <mat-option *ngFor="let station of stations" [value]="station.stationName">
-                {{ station.stationName }}
+              <mat-option *ngFor="let station of stations" [value]="station.station">
+                {{ station.station }}
               </mat-option>
             </mat-select>
           </mat-form-field>
 
           
           
-          <button mat-icon-button color="warn" type="button" (click)="deleteRoute(i)" *ngIf="i !== 0 && i !== stopArray.length-1 " aria-label="Delete Stop">
+          <button mat-icon-button color="warn" type="button" (click)="deleteStop(i)" *ngIf="i !== 0 && i !== stopArray.length-1 " aria-label="Delete Stop">
             <mat-icon>delete</mat-icon>
           </button>
         </div>

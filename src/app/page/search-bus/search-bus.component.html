@@ -14,7 +14,7 @@
     <form [formGroup]="searchBusForm" (ngSubmit)="onSubmit()">
       <mat-form-field appearance="fill" class="w-100 m-1">
         <mat-label>Bus Departure</mat-label>
-        <input matInput formControlName="departure" type="text" placeholder="Enter departure" required  [ngClass]="{'mat-form-field__input--error': searchBusForm.get('departure')?.invalid && searchBusForm.get('departure')?.touched}">
+        <input matInput formControlName="departure" type="text" placeholder="Enter departure" required [ngClass]="{'mat-form-field__input--error': searchBusForm.get('departure')?.invalid && searchBusForm.get('departure')?.touched}">
         <mat-error *ngIf="searchBusForm.get('departure')?.invalid && searchBusForm.get('departure')?.touched">
           Please provide a password.
         </mat-error>
@@ -27,17 +27,20 @@
           Destination is required.
         </mat-error>
       </mat-form-field>
-      
-      <mat-form-field appearance="fill" class="full-width">
-        <mat-label>Bus Booking Date</mat-label>
-        <input matInput [matDatepicker]="picker" formControlName="bookingDate" placeholder="Choose a date" [attr.min]="minDate">
+
+      <mat-form-field>
+        <mat-label>Booking Date</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="bookingDate" [min]="minDate">
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
-        <mat-error *ngIf="searchBusForm.get('bookingDate')?.invalid && searchBusForm.get('bookingDate')?.touched">
-          Booking Date is required.
+        <mat-error *ngIf="searchBusForm.get('bookingDate')?.hasError('required')">
+          Booking date is required.
+        </mat-error>
+        <mat-error *ngIf="searchBusForm.get('bookingDate')?.hasError('datePast')">
+          The booking date cannot be in the past.
         </mat-error>
       </mat-form-field>
-      
+
       <mat-form-field appearance="fill" class="full-width">
         <mat-label>Number of Seats</mat-label>
         <mat-select formControlName="seat">
@@ -52,7 +55,7 @@
           Bus Seat is required.
         </mat-error>
       </mat-form-field>
-      
+
       <mat-checkbox formControlName="isSingleLady" (change)="singleLady($event)">
         Single Lady
       </mat-checkbox>
@@ -67,25 +70,27 @@
 <div *ngIf="!loading" class="container mt-5">
   <div class="d-flex flex-wrap gap-3">
     <div class="card post p-3" *ngFor="let b of buses">
-      <div class="d-flex flex-column align-items-center">
+      <div class="d-flex flex-column">
         <i class="fa-solid fa-bus-simple fa-2x mb-2"></i>
         <div class="title fs-2 fw-1">{{ b.busNumber }}</div>
         <div class="title fs-4 fw-5">Departure : {{ b.departure }}</div>
         <div class="title fs-4 fw-5">Destination : {{ b.destination }}</div>
-        <div class="description text-truncate">{{ b.departureTime }}</div>
+        <div class="description text-truncate">Departure Time : {{ b.departureTime }}</div>
         <div class="d-flex mt-2">
-          <a *ngIf="role === 'admin'" (click)="onbusUpdate(b)">
-            <button class="btn btn-primary me-2">
-              <i class="fa-solid fa-pen-to-square"></i>
-            </button>
-          </a>
-          <button *ngIf="role === 'admin'" class="btn btn-danger me-2" (click)="ondelete(b)">
-            <i class="fa-regular fa-trash-can"></i>
+
+          <button *ngIf="role == 'admin' && searching" (click)="onbusUpdate(b)" class="btn me-2">
+            <i class="fa-solid fa-pen-to-square fa-2x text-primary"></i>
           </button>
+
+          <button *ngIf="role == 'admin' && searching" class="btn me-2" (click)="ondelete(b)">
+            <i class="fa-regular fa-trash-can fa-2x text-danger"></i>
+          </button>
+
           <button *ngIf="searching" (click)="bookBus(b)" class="btn">
             <img style="width: 60px;" class="img-fluid" src="../../../assets/Ecostyle_leather_seats.png" alt="Book">
           </button>
-          <button type="button" class="btn btn-info ms-2" (click)="selectBus(b)" data-bs-toggle="modal" data-bs-target="#exampleModal">
+          
+          <button type="button" class="btn ms-2" (click)="selectBus(b)" data-bs-toggle="modal" data-bs-target="#exampleModal">
             <i class="fa-solid fa-route fa-2x"></i>
           </button>
         </div>
@@ -124,7 +129,7 @@
                 <div class="me-2">
                   <mat-icon>location_on</mat-icon>
                 </div>
-          
+
                 <div>
                   <!-- <div class="time">{{ station.arrivalTime }} - {{ station.distance | number }} km</div> -->
                 </div>

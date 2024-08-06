@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import {  SelectItem } from 'primeng/api';
 import { IstaionGetApiresponse } from 'src/app/core/interfaces/istaion-get-apiresponse';
 import { Istation } from 'src/app/core/interfaces/istation';
@@ -9,6 +9,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { IDeleteApiResponse } from 'src/app/core/interfaces/idelete-api-response';
+import Swal from 'sweetalert2';
 @Component({
   selector: 'app-stations',
   templateUrl: './stations.component.html',
@@ -29,7 +30,8 @@ export class StationsComponent implements OnInit {
     private stationServivce: StationService,
     private messageService: MessageService,
     private fb : FormBuilder,
-    private router: Router
+    private router: Router,
+    private changeDetectorRef: ChangeDetectorRef,
   ) {
     this.role = JSON.parse(localStorage.getItem('user') as string).role;
     this.stationForm = this.fb.group({
@@ -51,11 +53,6 @@ export class StationsComponent implements OnInit {
     })
 
 
-    this.statuses = [
-      { label: 'In Stock', value: 'INSTOCK' },
-      { label: 'Low Stock', value: 'LOWSTOCK' },
-      { label: 'Out of Stock', value: 'OUTOFSTOCK' }
-    ];
   }
 
 
@@ -103,15 +100,26 @@ export class StationsComponent implements OnInit {
       this.subscription.add(
         submitObservable.subscribe({
           next: (res : IstaionCreateApiresponse) => {
+            
+            if (!this.stations.includes(this.clonedStation as Istation)) {              
+              this.stations.push(res.data);
+            }
             delete this.clonedStation;
-            this.messageService.add({ severity:'success', summary: 'Success', detail: res.message});
+            this.ngOnInit()
+            Swal.fire({
+              toast : true,
+              position: 'top-end',
+              title: 'Success!',
+              text: res.message,
+              icon:'success',
+              timer: 3000,
+              showConfirmButton : false
+            })
           },
          complete : ()=>{
           this.loading = false;
           this.isShowForm = false;
           this.isedit = false;
-          console.log("fgfd");
-          
          }
         })
       );

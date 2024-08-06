@@ -2,9 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
 import { Router } from '@angular/router';
-import { MessageService } from 'primeng/api';
 import { catchError, forkJoin, map, Subscription } from 'rxjs';
-import { IDeleteApiResponse } from 'src/app/core/interfaces/idelete-api-response';
 import { IrouteCreateResponse } from 'src/app/core/interfaces/iroute-create-response';
 import { IrouteGetResponse } from 'src/app/core/interfaces/iroute-get-response';
 import { Iroute } from 'src/app/core/interfaces/iroute.interface';
@@ -36,7 +34,6 @@ export class RouteComponent implements OnInit {
 
   constructor(
     private routeService: RouteService,
-    private messageService: MessageService,
     private fb: FormBuilder,
     private router: Router,
     private stationService: StationService,
@@ -101,10 +98,13 @@ export class RouteComponent implements OnInit {
         }),
         catchError(error => {
           Swal.fire({
+            position : 'top-end',
             title: 'Error',
             text: 'Please enter a proper Route Name where we have stations.',
             icon: 'error',
-            confirmButtonText: 'Okay'
+            toast: true,
+            showConfirmButton: false,
+            timer: 5000
           });
           this.routeForm.get('routeName')?.setValue('');
           return [];
@@ -133,18 +133,26 @@ export class RouteComponent implements OnInit {
   
     if (isDuplicate) {
       selectedFormGroup.get('station')?.setValue("");
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Duplicate Selection',
-        detail: 'This station has already been selected.'
+      Swal.fire({
+        position : 'top-end',
+        title: 'Error',
+        text: 'This station has already been selected.',
+        icon: 'error',
+        toast: true,
+        showConfirmButton: false,
+        timer: 5000
       });
       return;
     } else if (isReserved) {
       selectedFormGroup.get('station')?.setValue("");
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Station Reserved',
-        detail: 'This station is reserved for departure or destination.'
+      Swal.fire({
+        position : 'top-end',
+        title: 'Error',
+        text: 'This station is reserved for departure or destination.',
+        icon: 'error',  
+        toast: true,
+        showConfirmButton: false,
+        timer: 5000
       });
       return;
     }
@@ -286,7 +294,9 @@ export class RouteComponent implements OnInit {
             Swal.fire({
               title: "Deleted!",
               text: "Your file has been deleted.",
-              icon: "success"
+              icon: "success",
+              toast: true,
+             
             });
             this.ngOnInit();
           },
@@ -309,18 +319,37 @@ export class RouteComponent implements OnInit {
 
   onDelete(r: Iroute) {
     this.loading = true;
-    this.routeService.deleteRoute(r._id as string).subscribe({
-      next: (res: IDeleteApiResponse) => {
-        this.messageService.add({ severity: 'success', summary: 'Success', detail: res.message });
-        this.routes = this.routes.filter(i => i._id !== r._id);
-      },
-      error: (err) => {
-        this.loading = false;
-      },
-      complete: () => {
-        this.loading = false;
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+      if (result.isConfirmed && r._id) {
+        this.routeService.deleteRoute(r._id).subscribe({
+          next: () => {
+            this.loading = false;
+            Swal.fire({
+              position : 'top-end',
+              title: "Deleted!",
+              text: "Your file has been deleted.",
+              icon: "success",
+              toast: true,
+              showConfirmButton: false,
+              timer: 5000
+            });
+            this.ngOnInit();
+          },
+          error: (err) => {
+            this.loading = false;
+          }
+        });
       }
     });
+    
   }
   onSubmit() {
     if (this.routeForm.valid) {
@@ -359,7 +388,6 @@ export class RouteComponent implements OnInit {
         ...this.routeForm.value,
         stations: stationsArrayWithIds
     };
-    console.log(formValue);
     
       const submitObservable = this.isedit ?
         this.routeService.updateRoute(formValue) :
@@ -375,7 +403,7 @@ export class RouteComponent implements OnInit {
             this.isedit = false;
             this.routeForm.reset();
             (this.routeForm.get('stations') as FormArray).clear();
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: res.message });
+            Swal.fire({ title: 'Success', text: res.message, icon: 'success' });
             this.router.navigate(['/routes'])
           },
           complete: () => {

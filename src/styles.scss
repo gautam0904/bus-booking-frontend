@@ -4,6 +4,8 @@
 @import "~@angular/material/prebuilt-themes/indigo-pink.css"; 
 @import url("https://fonts.googleapis.com/css?family=Fira+Sans");
 @import "~bootstrap/dist/css/bootstrap.min.css";
+@import 'ngx-toastr/toastr-bs5-alert';
+@import 'ngx-toastr/toastr';
 
 *,
 *::before,
@@ -17,6 +19,64 @@ body {
     sans-serif;
   background: #3b4465 !important;
 }
+
+/* styles.css or styles.scss */
+
+/* Example CSS to make the color picker light-themed */
+
+.ngx-color-picker {
+  --cp-background: #ffffff; /* Background color of the color picker */
+  --cp-border-color: #dcdcdc; /* Border color */
+  --cp-button-color: #000000; /* Button color */
+  --cp-button-background: #f0f0f0; /* Button background color */
+  --cp-button-hover-color: #ffffff; /* Button hover color */
+  --cp-button-hover-background: #cccccc; /* Button hover background color */
+  --cp-color-preview-background: #f8f8f8; /* Color preview background */
+  --cp-color-preview-border: #e0e0e0; /* Color preview border color */
+}
+
+.ngx-color-picker .ngx-color-picker-popup {
+  background-color: var(--cp-background);
+  border: 1px solid var(--cp-border-color);
+}
+
+.ngx-color-picker .ngx-color-picker-button {
+  color: var(--cp-button-color);
+  background-color: var(--cp-button-background);
+}
+
+.ngx-color-picker .ngx-color-picker-button:hover {
+  color: var(--cp-button-hover-color);
+  background-color: var(--cp-button-hover-background);
+}
+
+.ngx-color-picker .ngx-color-picker-preview {
+  background-color: var(--cp-color-preview-background);
+  border: 1px solid var(--cp-color-preview-border);
+}
+
+:root {
+  --color-picker-background: #ffffff;
+  --color-picker-border-color: #dcdcdc;
+}
+
+.ngx-color-picker {
+  background-color: var(--color-picker-background);
+  border: 1px solid var(--color-picker-border-color);
+}
+/* your-component.component.css or .scss */
+
+.custom-color-picker {
+  --cp-background: #ffffff;
+  --cp-border-color: #dcdcdc;
+  --cp-button-color: #000000;
+  --cp-button-background: #f0f0f0;
+  --cp-button-hover-color: #ffffff;
+  --cp-button-hover-background: #cccccc;
+  --cp-color-preview-background: #f8f8f8;
+  --cp-color-preview-border: #e0e0e0;
+}
+
 
 .forms-section {
   display: flex;

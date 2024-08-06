@@ -2,103 +2,102 @@
 <div *ngIf="!loading" class="container full-height d-flex justify-content-center align-items-center">
   <div class="signup-form">
 
-    <div>
-      <form [formGroup]="bookingForm" (ngSubmit)="onSubmit()">
-        <div class="d-flex justify-content-end">
-          <button type="button" class="mt-3 border-0 rounded bg-transparent" routerLink="/bus-book" (click)="this.bookingForm.reset();"><i class="pi pi-times"></i></button>
-        </div>
-        <div class="d-flex align-items-center">
-          <span> Seat : </span> 
-          <i *ngFor="let s of seats" class="fw-3 mx-1">{{s}} , </i>
-        </div>
+    <form [formGroup]="bookingForm" (ngSubmit)="onSubmit()">
+      <div class="d-flex justify-content-end mb-3">
+        <button mat-icon-button type="button" routerLink="/bus-book" (click)="this.bookingForm.reset()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
 
-        <div class="row">
-          <div class="col-lg-6">
-            Bus departure : {{bookingForm.get('departure')?.value}}
-          </div>
-          <div class="col-lg-6">
-            Bus destination : {{bookingForm.get('destination')?.value}}
-          </div>
-        </div>
+      <div class="d-flex align-items-center mb-3">
+        <span class="mr-2">Seat :</span>
+        <mat-chip *ngFor="let s of seats">{{ s }}</mat-chip>
+      </div>
 
-        <div class="row">
-          <div class="col-lg-6">
-            BookingDate  : {{bookingForm.get('bookingDate')?.value}}
-          </div>
-          <div class="col-lg-6">
-            departureTime : {{bookingForm.get('departureTime')?.value}}
-          </div>
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Bus Departure</mat-label>
+            <input matInput [value]="bookingForm.get('departure')?.value" readonly>
+          </mat-form-field>
         </div>
-        
-        <div class="form-floating">
-          <input [ngClass]="{'form-control':true , 'border-danger': bookingForm.get('mobileNo')?.invalid && bookingForm.get('mobileNo')?.touched}" for="mobileNo" type="text" formControlName="mobileNo" placeholder="" required="">
+        <div class="col-md-6 mb-3">
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Bus Destination</mat-label>
+            <input matInput [value]="bookingForm.get('destination')?.value" readonly>
+          </mat-form-field>
+        </div>
+      </div>
 
-          <div class="text-danger" *ngIf="bookingForm.get('mobileNo')?.invalid && bookingForm.get('mobileNo')?.touched">
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Booking Date</mat-label>
+            <input matInput [value]="bookingForm.get('bookingDate')?.value" readonly>
+          </mat-form-field>
+        </div>
+        <div class="col-md-6 mb-3">
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Departure Time</mat-label>
+            <input matInput [value]="bookingForm.get('departureTime')?.value" readonly>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Mobile Number</mat-label>
+        <input matInput formControlName="mobileNo" placeholder="Enter your mobile number">
+        <mat-error *ngIf="bookingForm.get('mobileNo')?.invalid && bookingForm.get('mobileNo')?.touched">
           User's Correct mobile Number is required.
-          </div>
+        </mat-error>
+      </mat-form-field>
 
-          <label for="floatingTextarea">Mobile Number</label>
+      <div formArrayName="passenger" class="mb-3">
+        <div *ngFor="let fieldGroup of passengerArray.controls; let i = index" [formGroupName]="i" class="mb-3">
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Name</mat-label>
+            <input matInput formControlName="name" placeholder="Enter passenger's name">
+            <mat-error *ngIf="fieldGroup.get('name')?.invalid && fieldGroup.get('name')?.touched">
+              User Name is required.
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Age</mat-label>
+            <input matInput formControlName="age" type="number" placeholder="Enter passenger's age" required>
+            <mat-error *ngIf="fieldGroup.get('age')?.invalid && fieldGroup.get('age')?.touched">
+              User Age is required.
+            </mat-error>
+          </mat-form-field>
+
+          <mat-radio-group formControlName="gender">
+            <mat-radio-button value="Male">Male</mat-radio-button>
+            <mat-radio-button value="Female">Female</mat-radio-button>
+            <mat-error *ngIf="fieldGroup.get('gender')?.invalid && fieldGroup.get('gender')?.touched">
+              Gender is required.
+            </mat-error>
+          </mat-radio-group>
         </div>
+      </div>
 
-        <div formArrayName="passenger">
-          <div *ngFor="let fieldGroup of passengerArray.controls; let i = index" [formGroupName]="i">
-            <div class="form-floating">
-              <input [ngClass]="{'form-control': true, 'border-danger': fieldGroup.get('name')?.invalid && fieldGroup.get('name')?.touched}" formControlName="name" type="text" placeholder="">
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Payment Method</mat-label>
+        <mat-select (selectionChange)="pamentMethod($event)" formControlName="paymentMethod" required>
+          <mat-option value="">Select payment method</mat-option>
+          <mat-option value="upi">Payment by UPI</mat-option>
+          <mat-option value="card">Payment by Card</mat-option>
+        </mat-select>
+        <mat-error *ngIf="bookingForm.get('paymentMethod')?.invalid && bookingForm.get('paymentMethod')?.touched">
+          Payment method is required.
+        </mat-error>
+      </mat-form-field>
 
-              <div class="text-danger" *ngIf="fieldGroup.get('name')?.invalid && fieldGroup.get('name')?.touched">
-                User Name is required.
-              </div>
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Total Payment</mat-label>
+        <input matInput [value]="bookingForm.get('payment')?.value" readonly>
+      </mat-form-field>
 
-              <label for="floatingTextarea">Name</label>
-            </div>
-
-            <div class="form-floating">
-              <input [ngClass]="{'form-control': true, 'border-danger': fieldGroup.get('age')?.invalid && fieldGroup.get('age')?.touched}" formControlName="age" type="number" placeholder="" required>
-
-              <div class="text-danger" *ngIf="fieldGroup.get('age')?.invalid && fieldGroup.get('age')?.touched">
-                User Age is required.
-              </div>
-
-              <label for="floatingTextarea">Age</label>
-            </div>
-
-            <div class="radio-inline">
-              <label>
-                <input [ngClass]="{ 'mx-2':true, 'border-danger': fieldGroup.get('gender')?.invalid && fieldGroup.get('gender')?.touched}"  type="radio" value="Male" formControlName="gender">
-                  <span>male</span>
-              </label>
-              <label>
-                <input [ngClass]="{ 'mx-2':true,'border-danger': fieldGroup.get('gender')?.invalid && fieldGroup.get('gender')?.touched}"  type="radio" value="Female" formControlName="gender">
-                  <span>female</span>
-              </label>
-              <div class="text-danger" *ngIf="fieldGroup.get('gender')?.invalid && fieldGroup.get('gender')?.touched">
-                Gender is required.
-              </div>
-            </div>
-            
-          </div>
-        </div>
-
-       
-
-        <div class="row">
-          <div class="col-lg-6">Payment : {{bookingForm.get('payment')?.value}}</div>
-        </div>
-
-        <div class="form-group">
-          <label for="payment">Payment Method</label>
-          <select id="payment1" class="form-control text-dark" (change)="pamentMethod($event)" formControlName="paymentMethod" required >
-            <option value="">Select payment method</option>
-            <option class="text-dark" value="upi">Payment by UPI</option>
-            <option class="text-dark" value="card">Payment by Card</option>
-          </select>
-          <div class="text-danger" *ngIf="bookingForm.get('paymentMethod')?.invalid && bookingForm.get('paymentMethod')?.touched">
-            Payment method is required.
-          </div>
-        </div>
-
-        <button class="btn btn-primary m-1" type="submit">Confirm Booking</button>
-      </form>
-    </div>
+      <button mat-raised-button color="primary" type="submit">Confirm Booking</button>
+    </form>
   </div>
 </div>

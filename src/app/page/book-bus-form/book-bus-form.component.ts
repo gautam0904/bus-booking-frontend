@@ -17,9 +17,8 @@ export class BookBusFormComponent implements OnInit {
   loading: boolean = false;
   bookedbus: Ibus | undefined = undefined;
   bookingForm: FormGroup;
-  bus: Ibus | undefined = undefined
   seats: number[] | undefined = undefined;
-
+  private previousMethod: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -38,7 +37,7 @@ export class BookBusFormComponent implements OnInit {
       bookingDate: ['', Validators.required],
       seat: ['', Validators.required],
       paymentMethod: ['', Validators.required],
-      mobileNo : ['', [Validators.required , Validators.pattern(/^\d{10}$/)]],
+      mobileNo: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
       isSingleLady: [''],
       passenger: this.fb.array([])
     });
@@ -46,16 +45,12 @@ export class BookBusFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.loading = true;
-  
-    this.sharedService.seat$.subscribe(s => {
-      this.seats = s;
-      this.seats?.forEach(s => this.addpassenger())
-    });
 
-    this.sharedService.bus$.subscribe(b => {
+  
+
+    this.sharedService.bus$.subscribe(b => {     
       this.bookedbus = b;
       this.loading = false;
-      this.setInitialValues();
     });
     this.sharedService.bookUser$.subscribe(b => {
       this.bookingForm.patchValue({
@@ -64,6 +59,11 @@ export class BookBusFormComponent implements OnInit {
         isSingleLady: b?.isSingleLady
       });
     })
+      this.sharedService.seat$.subscribe(s => {
+      this.seats = s;
+      this.seats?.forEach(s => this.addpassenger())
+    });
+    this.setInitialValues();
   }
 
   get passengerArray() {
@@ -71,11 +71,20 @@ export class BookBusFormComponent implements OnInit {
   }
 
   createpassenger(): FormGroup {
-    return this.fb.group({
-      name: ['', Validators.required],
-      age: ['', Validators.required],
-      gender: ['', Validators.required],
-    });
+    if (this.bookingForm.get('isSingleLady')?.value === true) {
+      return this.fb.group({
+        name: ['', Validators.required],
+        age: ['', Validators.required],
+        gender: [{ value: 'Female', disabled: true }, Validators.required,],
+      });
+    }
+    else {
+      return this.fb.group({
+        name: ['', Validators.required],
+        age: ['', Validators.required],
+        gender: ['', Validators.required,],
+      });
+    }
   }
 
   addpassenger() {
@@ -89,79 +98,58 @@ export class BookBusFormComponent implements OnInit {
 
     if (this.bookedbus) {
 
-      this.busService.getBusbyId(this.bookedbus._id || '').subscribe({
-        next: (resdata: IbusgetApiResponse) => {
-          this.loading = false;
-          this.bus = resdata.data as Ibus;
-        },
-        error: (err) => {
-          this.loading = false;
-        }
-      })
-
-      const busRoute = this.bookedbus.route;
-
-      let userpreviusdistance = 0;
-      let userdistance = 0;
-
-      // let previusstation = busRoute[0].previousStation;
-
-      // busRoute.forEach((route, index) => {
-      //   if (route.previousStation === previusstation) {
-      //     userdistance += route.distance;
-      //     previusstation = route.currentStation;
-      //   } else {
-      //     userpreviusdistance += route.distance;
+      // this.busService.getBusbyId(this.bookedbus._id || '').subscribe({
+      //   next: (resdata: IbusgetApiResponse) => {
+      //     this.loading = false;
+      //     this.bus = resdata.data as Ibus;
+      //   },
+      //   error: (err) => {
+      //     this.loading = false;
       //   }
-      // });
+      // })
 
-      let newDepartureTime = new Date(new Date(this.bookedbus.departureTime).getTime() + (userpreviusdistance / 50) * 60000);
 
-      let formattedDepartureTime = `${('0' + newDepartureTime.getHours()).slice(-2)}:${('0' + newDepartureTime.getMinutes()).slice(-2)}`;
+        const busStop = this.bookedbus.stops;
+        let userdistance = 0;
+     
 
-      this.bookingForm.patchValue({
-        busId: this.bookedbus._id,
-        seatNumber: this.seats,
-        departure: this.bookedbus.departure,
-        destination: this.bookedbus.destination,
-        departureTime: formattedDepartureTime,
-        payment: userdistance * this.bookedbus.charge,
-      });
+        busStop.forEach((s) => {
+         userdistance += s.distance
+        });
+       
+        this.bookingForm.patchValue({
+          busId: this.bookedbus._id,
+          seatNumber: this.seats,
+          departure: this.bookedbus.departure,
+          destination: this.bookedbus.destination,
+          departureTime: this.bookedbus.departureTime,
+          payment: userdistance * this.bookedbus.charge *(this.seats?.length || 0),
+        });
+      }
+
+
     }
-  }
+  
 
- // Add a class-level variable to keep track of the previous payment method
-private previousMethod: string = '';
-
-pamentMethod(event: any): void {
-    const selectedMethod = event.target.value;
-    const currentPayment = this.bookingForm.controls['payment'].value || 0;
-
-    if (this.previousMethod === 'upi') {
-        if (selectedMethod !== 'upi') {
-            this.bookingForm.patchValue({
-                payment: currentPayment - 26
-            });
-        }
-    } else if (this.previousMethod === 'card') {
-        if (selectedMethod !== 'card') {
-            this.bookingForm.patchValue({
-                payment: currentPayment + 26
-            });
-        }
-    } else {
-        if (selectedMethod === 'upi') {
-            this.bookingForm.patchValue({
-                payment: currentPayment + 26
-            });
-        } else if (selectedMethod === 'card') {
-        }
+    pamentMethod(event: any): void {
+      const selectedMethod = event.value;
+      const currentPayment = this.bookingForm.controls['payment'].value || 0;
+  
+      if (this.previousMethod === 'upi' && selectedMethod !== 'upi') {
+        this.bookingForm.patchValue({ payment: currentPayment - 26 });
+      } else if (this.previousMethod === 'card' && selectedMethod !== 'card') {
+        this.bookingForm.patchValue({ payment: currentPayment + 26 });
+      } else if (this.previousMethod === '' && selectedMethod === 'upi') {
+        this.bookingForm.patchValue({ payment: currentPayment + 26 });
+      }
+  
+      this.previousMethod = selectedMethod;
     }
-    this.previousMethod = selectedMethod;
-}
 
 
   onSubmit(): void {
+    console.log(this.bookingForm);
+    
     if (
       this.bookingForm.controls['busId'].valid &&
       this.bookingForm.controls['seatNumber'].valid &&
@@ -173,11 +161,11 @@ pamentMethod(event: any): void {
       this.bookingForm.controls['seat'].valid &&
       this.bookingForm.controls['paymentMethod'].valid &&
       this.bookingForm.controls['mobileNo'].valid &&
-      this.bookingForm.controls['isSingleLady'].valid  &&
-      this.passengerArray.controls.every(control => control.valid) 
+      this.bookingForm.controls['isSingleLady'].valid &&
+      this.passengerArray.controls.every(control => control.valid)
     ) {
       this.loading = true;
-      
+
       this.bookingService.getbookseat(this.bookingForm.value).subscribe({
         next: (resdata: IbookingSeatgetApiResponse) => {
 
@@ -210,5 +198,5 @@ pamentMethod(event: any): void {
         }
       });
     }
-}
+  }
 }

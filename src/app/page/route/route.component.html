@@ -101,6 +101,11 @@
       <button *ngIf="role === 'admin'" mat-icon-button color="warn" (click)="ondelete(r)">
         <mat-icon>delete</mat-icon>
       </button>
+
+      <button *ngIf="role === 'admin'" mat-icon-button color="Accent" (click)="ondelete(r)">
+        <mat-icon>delete</mat-icon>
+      </button>
+
       <button mat-icon-button color="primary" (click)="selectRoute(r)" data-bs-toggle="modal" data-bs-target="#exampleModal">
         <i class="fa-solid fa-route "></i>
       </button>
@@ -152,7 +157,7 @@
 
                 </mat-list>
 
-                <mat-list>
+                <mat-list *ngIf="clonedRoute">
                   <mat-list-item class="item d-flex justify-content-center align-items-center" *ngFor="let station of clonedRoute.stations ; let i = index">
                     <div class="item-content d-flex">
                     

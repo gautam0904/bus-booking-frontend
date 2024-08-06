@@ -1,32 +1,127 @@
-.full-height {
-  height: 100vh;
+.circle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #ccc;
+  margin-right: 15px;
+}
+
+.post {
+  width: 100%;
+  max-width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+}
+
+
+.info {
+  flex: 1;
+}
+
+.title {
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+.time {
+  font-size: 14px;
 }
 
 .signup-form {
-  width: 100%;
-  max-width: 500px;
+width: 100%;
+max-width: 600px;
 }
 
-.station-card {
-  width: 100%;
-  max-width: 300px;
+mat-card {
+padding: 16px;
+width: 100%;
 }
 
-.card {
-  --bs-card-border-width: unset;
+mat-toolbar {
+display: flex;
+justify-content: space-between;
+align-items: center;
 }
 
+mat-form-field {
+width: 100%;
+margin-bottom: 16px;
+}
+
+
+
+.secondary-button {
+background-color: rgba(0, 123, 255, 0.1); 
+border-color: #0056b3; 
+color: #0056b3; 
+}
+
+.secondary-button:focus {
+box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5); 
+}
+
+
+
+.form-floating>.form-control-plaintext~label::after, .form-floating>.form-control:focus~label::after, .form-floating>.form-control:not(:placeholder-shown)~label::after, .form-floating>.form-select~label::after {
+background-color : transparent !important;
+}
+
+.card{
+--bs-card-border-width: unset;
+}
 @media (max-width: 768px) {
-  .signup-form {
+.signup-form{
     width: 100%;
   }
 }
 
-.mat-mdc-card {
-  background-color: #fff9e5;
+
+
+
+.route-container {
+  display: flex;
+  align-items: flex-start; /* Align items to the top */
+  position: relative;
 }
 
-.user {
-  width: 19%;
-  padding: 2%;
+.circle-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.route-container {
+  display: flex;
+  flex-direction: column; 
+  align-items: center; 
+  position: relative;
+}
+
+.circle-container {
+  display: flex;
+  flex-direction: column; 
+  align-items: center;
+  position: relative;
+}
+
+.circle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #ccc;
+  margin-bottom: 15px; 
+}
+
+.circle.ontime {
+  background-color: #4CAF50;
+}
+
+
+
+.info {
+  flex: 1;
 }
