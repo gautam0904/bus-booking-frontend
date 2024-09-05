@@ -1,0 +1,79 @@
+.coupon {
+    width: 300px;
+    height: 150px;
+    background-color: #fff;
+    color: 3b4465;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 10px;
+    border: 2px solid #3b4465;
+    padding: 10px;
+    position: relative;
+}
+
+.coupon::before,
+.coupon::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    z-index: -1;
+}
+
+.coupon::before {
+    opacity: 0.2;
+    transform: translateX(-5px) translateY(-5px);
+}
+
+.coupon::after {
+    opacity: 0.1;
+    transform: translateX(5px) translateY(5px);
+}
+
+.coupon .text {
+    margin-top: 10px;
+}
+
+.punch-hole {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #3b4465;
+    border: 2px solid #fff;
+}
+
+.punch-hole.left {
+    left: 20px;
+}
+
+.punch-hole.right {
+    right: 15px;
+}
+
+
+
+.zigzag-border {
+    position: absolute;
+    top: 0;
+    width: 10px;
+    height: 100%;
+}
+
+.zigzag-border.left {
+    left: 0;
+    background-size: 16px 7%;
+    background-image: repeating-linear-gradient(-137deg, #fff, #fff 10px, #3b4465 10px, #3b4465 20px);
+}
+
+.zigzag-border.right {
+    right: 0;
+    background-size: 16px 6%;
+    background-image: repeating-linear-gradient(45deg, #fff 0px, #fff 6px, #3b4465 0px, #3b4465 22px);
+}

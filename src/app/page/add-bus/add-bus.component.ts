@@ -100,7 +100,7 @@ export class AddBusComponent {
   createStops(): FormGroup {
     return this.fb.group({
       station: ['', Validators.required],
-      distance: ['', Validators.required]
+      distance: ['',]
     });
 
 
@@ -171,7 +171,7 @@ export class AddBusComponent {
   ngOnDestroy() {
     this.subscription.unsubscribe();
   }
- async selectRoute(e: MatSelectChange) {
+  async selectRoute(e: MatSelectChange) {
     const route = e.value;
 
     const R = this.routes.find(r => r.routeName === route);
@@ -190,17 +190,17 @@ export class AddBusComponent {
               error: (err) => reject(err),
             });
         });
-    
+
         station.push(resdata.data as Istation);
       } catch (error) {
         this.loading = false;
       }
     });
-    
+
     await Promise.all(stationPromises);
-    
+
     this.stations = station;
-    
+
 
     let [departure, destination] = route.split(' - ');
 
@@ -276,7 +276,7 @@ export class AddBusComponent {
 
     if (isDuplicate) {
 
-      
+
       selectedFormGroup.get('station')?.setValue("");
       Swal.fire({
         title: 'Duplicate Selection',
@@ -333,63 +333,50 @@ export class AddBusComponent {
   }
 
   onSubmit() {
-
-    this.busForm.patchValue({
-      route: this.selectedRoute?._id
-    })
-
-    if (this.stopArray && this.stopArray.length > 0) {
-      this.busForm.getRawValue().stops.forEach((stop: { station: string, distance: number }, index: number) => {
-
-        const stationName = stop.station;
-
-  
-        let station = this.stations.find(
-          station => station.station === stationName
-        );
-        this.stopArray.at(index).patchValue({
-          station: station?._id,
-        });
-        station = this.selectedRoute?.stations.find(
-          s => s.stationName === station?.station
-        );
-
-        if (station) {
-          stop.station = station._id as string;
-
-          if (index > 0) {
-
-            const previousStationName = this.busForm.getRawValue().stops[index - 1].station;
-
-            let previousStation = this.stations.find(
-              s => s._id === previousStationName
-            );
-
-            previousStation = this.selectedRoute?.stations.find(
-              s => s.stationName === previousStation?.station
-            );
-
-            if ((previousStation?.distanceFromStart || previousStation?.distanceFromStart == 0) && station.distanceFromStart) {
-              stop.distance = station.distanceFromStart - previousStation.distanceFromStart;
-            }
-          } else {
-              stop.distance = 0;
-          }
-
-          this.stopArray.at(index).patchValue({
-            distance: stop.distance
-          });
-        }
-      });
-
-    } else {
-      this.routeValid = false;
-    }
-
     console.log(this.busForm);
-    
 
     if (this.busForm.valid) {
+
+      this.busForm.patchValue({
+        route: this.selectedRoute?._id
+      })
+      if (this.stopArray && this.stopArray.length > 0) {
+        this.busForm.getRawValue().stops.forEach((stop: { station: string, distance: number }, index: number) => {
+
+          const stationName = stop.station;
+
+
+          let station = this.stations.find(
+            station => station.station === stationName
+          );
+          this.stopArray.at(index).patchValue({
+            station: station?._id,
+          });
+          station = this.selectedRoute?.stations.find(
+            s => s.stationName === station?.station
+          );
+
+          if (station) {
+            stop.station = station._id as string;
+
+            if (index > 0) {
+              if (station.distanceFromStart) {
+                stop.distance = station.distanceFromStart
+              }
+            } else {
+              stop.distance = 0;
+            }
+
+            this.stopArray.at(index).patchValue({
+              distance: stop.distance
+            });
+          }
+        });
+
+      } else {
+        this.routeValid = false;
+      }
+
       this.loading = true;
 
       const submitObservable = this.isedit ?
@@ -398,8 +385,22 @@ export class AddBusComponent {
 
       this.subscription.add(
         submitObservable.subscribe({
-         
-          complete : () => {
+
+          next: () => {
+            console.log("hello");
+
+            Swal.fire({
+              title: 'Success',
+              text: this.isedit ? 'Bus updated successfully' : 'Bus created successfully',
+              icon: 'success',
+              position: 'top-end',
+              toast: true,
+              showConfirmButton: false,
+              timer: 5000
+            });
+          },
+
+          complete: () => {
             this.loading = false;
             this.busForm.reset();
             this.router.navigate(['/']);
@@ -407,11 +408,27 @@ export class AddBusComponent {
         })
       );
     } else {
-      Object.values(this.busForm.controls).forEach(control => {
+      this.markAllControlsAsTouched(this.busForm);
+      this.markAllControlsAsTouched(this.stopArray);
+    }
+  }
+  private markAllControlsAsTouched(formGroup: FormGroup | FormArray): void {
+    if (formGroup instanceof FormGroup) {
+      Object.values(formGroup.controls).forEach(control => {
         control.markAsTouched();
+        if (control instanceof FormGroup || control instanceof FormArray) {
+          this.markAllControlsAsTouched(control);
+        }
+      });
+    } else if (formGroup instanceof FormArray) {
+      formGroup.controls.forEach(control => {
+        control.markAsTouched();
+        if (control instanceof FormGroup || control instanceof FormArray) {
+          this.markAllControlsAsTouched(control);
+        }
       });
     }
   }
-
-
 }
+
+

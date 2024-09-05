@@ -78,50 +78,42 @@ background-color : transparent !important;
   }
 }
 
-
-
-
 .route-container {
-  display: flex;
-  align-items: flex-start; /* Align items to the top */
   position: relative;
 }
 
-.circle-container {
+
+
+.mat-list-item {
+  position: relative;
+}
+
+.station-circle {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  position: relative;
-}
-
-.route-container {
-  display: flex;
-  flex-direction: column; 
-  align-items: center; 
-  position: relative;
-}
-
-.circle-container {
-  display: flex;
-  flex-direction: column; 
-  align-items: center;
-  position: relative;
-}
-
-.circle {
-  width: 20px;
-  height: 20px;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
-  background-color: #ccc;
-  margin-bottom: 15px; 
-}
-
-.circle.ontime {
   background-color: #4CAF50;
+  color: white;
 }
 
-
-
-.info {
+.station-info {
   flex: 1;
+  margin-left: 10px;
+  flex: 1;
+  display: flex;
+  margin-left: 10px;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.station-name {
+  font-weight: bold;
+}
+
+.station-time-distance {
+  font-size: 0.9em;
+  color: gray;
 }

@@ -1,0 +1,15 @@
+<div class="coupon" *ngFor="let c of coupons">
+    <div class="punch-hole left"></div>
+    <div class="punch-hole right"></div>
+    <div class="zigzag-border left"></div>
+    <div class="zigzag-border right"></div>
+    <div class="text">
+        {{c.code}}
+    </div>
+    <div class="fs-6">
+        {{c.type}}
+    </div>
+    <p>{{c.discountValue}}</p>
+
+    <button class="btn">Apply <i class="fa-solid fa-road-circle-check"></i></button>
+</div>

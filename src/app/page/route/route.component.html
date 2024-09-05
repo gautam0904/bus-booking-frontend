@@ -52,7 +52,7 @@
         <div *ngFor="let fieldGroup of stationArray.controls; let i = index" [formGroupName]="i">
           <mat-form-field appearance="fill">
             <mat-label>Route Station</mat-label>
-            <mat-select formControlName="station" (selectionChange)="selectStation($event, i)">
+            <mat-select formControlName="station" data-live-search="true" (selectionChange)="selectStation($event, i)">
               <mat-option *ngFor="let station of stations" [value]="station.station">
                 {{ station.station }}
               </mat-option>
@@ -61,7 +61,6 @@
               Station is required.
             </mat-error>
           </mat-form-field>
-
           <mat-form-field appearance="fill" style="margin: 0;">
             <mat-label>Distance from Start Station</mat-label>
             <input matInput formControlName="distanceFromStart" type="number" placeholder="Distance in km" required min="0">
@@ -102,9 +101,9 @@
         <mat-icon>delete</mat-icon>
       </button>
 
-      <button *ngIf="role === 'admin'" mat-icon-button color="Accent" (click)="ondelete(r)">
+      <!-- <button *ngIf="role === 'admin'" mat-icon-button color="Accent" (click)="ondelete(r)">
         <mat-icon>delete</mat-icon>
-      </button>
+      </button> -->
 
       <button mat-icon-button color="primary" (click)="selectRoute(r)" data-bs-toggle="modal" data-bs-target="#exampleModal">
         <i class="fa-solid fa-route "></i>

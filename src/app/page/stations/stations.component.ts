@@ -67,19 +67,34 @@ export class StationsComponent implements OnInit {
   }
 
   onDelete(s : Istation){
+
     this.loading = true;
-    this.stationServivce.deletestation(s._id as string).subscribe({
-      next: (res: IDeleteApiResponse) => {
-        this.messageService.add({ severity:'success', summary: 'Success', detail: res.message});
-        this.stations = this.stations.filter(i => i._id!== s._id);
-      },
-      error : (err )=> {
-        this.loading = false;
-      },
-      complete : ()=>{
-        this.loading = false;
+
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+      if (result.isConfirmed && s._id) {
+        this.stationServivce.deletestation(s._id as string).subscribe({
+          next: (res: IDeleteApiResponse) => {
+            this.messageService.add({ severity:'success', summary: 'Success', detail: res.message});
+            this.stations = this.stations.filter(i => i._id!== s._id);
+          },
+          error : (err )=> {
+            this.loading = false;
+          },
+          complete : ()=>{
+            this.loading = false;
+          }
+        });
       }
     });
+    
   }
 
   ngOnDestroy() {

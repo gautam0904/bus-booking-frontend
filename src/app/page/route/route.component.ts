@@ -44,7 +44,7 @@ export class RouteComponent implements OnInit {
       _id: [""],
       departure: [{ value: "", disabled: true }, Validators.required],
       destination: [{ value: "", disabled: true }, Validators.required],
-      distance: ["", Validators.required],
+      // distance: ["", Validators.required],
       routeName: ["", [Validators.required, Validators.pattern('^[A-Za-z]+ - [A-Za-z]+$')]],
       stations: this.fb.array([], this.validateStations())
     });
@@ -75,6 +75,7 @@ export class RouteComponent implements OnInit {
       const input = e.target as HTMLInputElement;
       const routeName = input.value;
       let [departure, destination] = routeName.split(' - ');
+
   
       const departure$ = this.stationService.getstationbyFilter(this.toCamelCase(departure));
       const destination$ = this.stationService.getstationbyFilter(this.toCamelCase(destination));
@@ -93,7 +94,8 @@ export class RouteComponent implements OnInit {
   
           this.routeForm.patchValue({
             departure: departureStation,
-            destination: destinationStation
+            destination: destinationStation,
+            routeName : `${departureStation} - ${destinationStation}`
           });
         }),
         catchError(error => {
@@ -377,13 +379,8 @@ export class RouteComponent implements OnInit {
             distanceFromStart: (control.get('distanceFromStart') as FormControl).value
         };
     });
-
-
-
-
-
-
-
+    console.log(this.routeForm.value);
+    
       const formValue = {
         ...this.routeForm.value,
         stations: stationsArrayWithIds

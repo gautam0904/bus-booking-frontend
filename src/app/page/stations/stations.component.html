@@ -15,8 +15,9 @@
 <div *ngIf="!loading && isShowForm" class="container d-flex justify-content-center align-items-center full-height">
   <mat-card class="signup-form">
     <mat-card-header>
+      
       <mat-card-title>{{ isedit ? 'Edit Station' : 'Add Station' }}</mat-card-title>
-      <button *ngIf="isedit" mat-icon-button (click)="stationForm.reset(); isedit=false;isShowForm = false;" aria-label="Close">
+      <button class="ms-auto" mat-icon-button routerLink="/" (click)="this.stationForm.reset(); isedit=false">
         <mat-icon>close</mat-icon>
       </button>
     </mat-card-header>
@@ -40,8 +41,9 @@
 </div>
 
 <div *ngIf="!loading && !isShowForm" class="container mt-4">
-  <div class="d-flex flex-wrap gap-4">
-    <mat-card *ngFor="let s of stations" class="station-card">
+  <div class="d-flex flex-wrap gap-4" >
+          <mat-card *ngFor="let s of stations" class="station-card">
+
       <mat-card-content>
         <div class="d-flex justify-content-between align-items-center">
           <h4>{{ s.station }}</h4>

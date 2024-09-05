@@ -71,25 +71,28 @@
   <div class="d-flex flex-wrap gap-3">
     <div class="card post p-3" *ngFor="let b of buses">
       <div class="d-flex flex-column">
-        <i class="fa-solid fa-bus-simple fa-2x mb-2"></i>
-        <div class="title fs-2 fw-1">{{ b.busNumber }}</div>
-        <div class="title fs-4 fw-5">Departure : {{ b.departure }}</div>
-        <div class="title fs-4 fw-5">Destination : {{ b.destination }}</div>
-        <div class="description text-truncate">Departure Time : {{ b.departureTime }}</div>
+        <div class="d-flex align-items-center">
+          <i class="fa-solid fa-bus-simple fa-2x mb-2"></i>
+          <div class="title ms-1 fs-2 fw-1 d-flex">{{ b.busNumber }} </div>
+        </div>
+        <div class="title fs-4 fw-1 d-flex">{{ b.departure }}-{{ b.destination }}</div>
+        <div class="title fs-4 fw-5">Departure : {{ searchBusForm.get('departure')?.value || b.departure}}</div>
+        <div class="title fs-4 fw-5">Destination : {{ searchBusForm.get('destination')?.value || b.destination}}</div>
+        <div class="description text-truncate">Departure Time : {{ getDepartureTime(b) }}</div>
         <div class="d-flex mt-2">
 
-          <button *ngIf="role == 'admin' && searching" (click)="onbusUpdate(b)" class="btn me-2">
+          <button *ngIf="role == 'admin' " (click)="onbusUpdate(b)" class="btn me-2">
             <i class="fa-solid fa-pen-to-square fa-2x text-primary"></i>
           </button>
 
-          <button *ngIf="role == 'admin' && searching" class="btn me-2" (click)="ondelete(b)">
+          <button *ngIf="role == 'admin'" class="btn me-2" (click)="ondelete(b)">
             <i class="fa-regular fa-trash-can fa-2x text-danger"></i>
           </button>
 
           <button *ngIf="searching" (click)="bookBus(b)" class="btn">
             <img style="width: 60px;" class="img-fluid" src="../../../assets/Ecostyle_leather_seats.png" alt="Book">
           </button>
-          
+
           <button type="button" class="btn ms-2" (click)="selectBus(b)" data-bs-toggle="modal" data-bs-target="#exampleModal">
             <i class="fa-solid fa-route fa-2x"></i>
           </button>
@@ -113,28 +116,28 @@
             <mat-card-title>Bus Route for {{ selectedBus.busNumber }}</mat-card-title>
           </mat-card-header>
           <mat-card-content>
-            <mat-list>
-              <mat-list-item class="d-flex align-items-center">
-                <div class="me-2">
-                  <mat-icon>directions_bus</mat-icon>
-                </div>
-                <div class="me-2 flex-grow-1">
-                  <div class="title">{{ selectedBus.departure }}</div>
-                </div>
-                <div>
-                  <div class="time">{{ selectedBus.departureTime }}</div>
-                </div>
-              </mat-list-item>
-              <mat-list-item *ngFor="let station of selectedBus.route" class="d-flex align-items-center">
-                <div class="me-2">
-                  <mat-icon>location_on</mat-icon>
-                </div>
-
-                <div>
-                  <!-- <div class="time">{{ station.arrivalTime }} - {{ station.distance | number }} km</div> -->
-                </div>
-              </mat-list-item>
-            </mat-list>
+            <div class="route-container">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th class="station-name ms-2">Station</th>
+                    <th class="station-time-distance">Arrival Time</th>
+                    <th class="station-time-distance">Distance</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let station of selectedBus.stops">
+                    <td class="d-flex">
+                      <div class="station-circle text-dark">
+                        <mat-icon>location_on</mat-icon>
+                      </div><span class="station-name ms-2">{{ station.stationName }}</span>
+                    </td>
+                    <td class="station-time-distance">{{ station.arrivalTime }}</td>
+                    <td class="station-time-distance">{{ station.distance | number }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </mat-card-content>
         </mat-card>
       </div>

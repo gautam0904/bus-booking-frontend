@@ -1,10 +1,4 @@
-.circle {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background-color: #ccc;
-  margin-right: 15px;
-}
+
 
 .post {
   width: 100%;
@@ -15,6 +9,9 @@
   padding: 16px;
 }
 
+.station-card{
+  width: 300px;
+}
 
 .info {
   flex: 1;
@@ -35,10 +32,6 @@ width: 100%;
 max-width: 600px;
 }
 
-mat-card {
-padding: 16px;
-width: 100%;
-}
 
 mat-toolbar {
 display: flex;
@@ -79,49 +72,53 @@ background-color : transparent !important;
 }
 
 
-
-
-.route-container {
-  display: flex;
-  align-items: flex-start; /* Align items to the top */
-  position: relative;
-}
-
-.circle-container {
+.form {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  position: relative;
-}
-
-.route-container {
-  display: flex;
-  flex-direction: column; 
-  align-items: center; 
-  position: relative;
-}
-
-.circle-container {
-  display: flex;
-  flex-direction: column; 
-  align-items: center;
-  position: relative;
-}
-
-.circle {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background-color: #ccc;
-  margin-bottom: 15px; 
-}
-
-.circle.ontime {
-  background-color: #4CAF50;
+  gap: 14px;
+  padding: 20px;
 }
 
 
+.form-floating>.form-control-plaintext~label::after, .form-floating>.form-control:focus~label::after, .form-floating>.form-control:not(:placeholder-shown)~label::after, .form-floating>.form-select~label::after {
+background-color : transparent !important;
+}
 
-.info {
-  flex: 1;
+.card{
+--bs-card-border-width: unset;
+}
+@media (max-width: 768px) {
+.signup-form{
+    width: 100%;
+  }
+}
+.mat-mdc-card{
+  background-color: #fff9e5 ;
+}
+
+.user {
+  width: 19%;
+  padding: 2%;
+}
+
+@media  (max-width: 1400px) {
+  .user {
+      width: 23%;
+      padding: 1%;
+  }
+}
+@media  (max-width: 768px) {
+  .user {
+      width: 30%; 
+  }
+}
+@media  (max-width: 576px) {
+  .user {
+      width: 45%;
+  }
+}
+@media  (max-width: 376px) {
+  .user {
+      width: 90%;
+  }
 }

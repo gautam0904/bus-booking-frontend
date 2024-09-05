@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Ibus } from 'src/app/core/interfaces/ibus';
 import { IbusgetApiResponse } from 'src/app/core/interfaces/ibusget-api-response';
@@ -25,6 +25,7 @@ export class SearchBusComponent {
   minDate!: string;
   loading: boolean = false;
   selectedBus!: Ibus;
+  getAll = false;
   private subscription: Subscription = new Subscription();
   dataSource!: [{ previousStation: string; currentStation: string; distance: number; arrivalTime: string; }];
 
@@ -33,6 +34,7 @@ export class SearchBusComponent {
     private sharedService: SharedService,
     private router: Router,
     private fb: FormBuilder,
+    private route: ActivatedRoute
   ){
    
     this.searchBusForm = this.fb.group({
@@ -42,12 +44,34 @@ export class SearchBusComponent {
       seat: ['', Validators.required],
       isSingleLady: ['']
     });
+    
   }
 
   ngOnInit(): void {
     const today = new Date();
+
     this.minDate = today.toISOString().split('T')[0];
-    this.role = JSON.parse(localStorage.getItem("user") as string).role
+
+    this.route.paramMap.subscribe((params: { get: (arg0: string) => any; }) => {
+     this.getAll = params.get('getAll');
+    });
+
+    this.role = JSON.parse(localStorage.getItem("user") as string).role;
+
+    if(this.getAll){
+      this.showform = false;
+      this.loading = true;
+
+      this.busService.getAll().subscribe({
+        next: (res: IbusgetApiResponse) => {
+          this.buses = res.data as Ibus[];
+        },
+        complete: () => {
+          this.loading = false;
+        }
+      })
+    }
+ 
     }
 
   onbusUpdate(bus: Ibus) {
@@ -64,6 +88,12 @@ export class SearchBusComponent {
         ? { 'datePast': 'The booking date cannot be in the past' }
         : null;
     };
+  }
+
+  getDepartureTime(bus: Ibus): string {
+    const departure = this.searchBusForm.get('departure')?.value || bus.departure;
+    const stop = bus.stops.find((st) => st.stationName === departure);
+    return stop?.arrivalTime || '';
   }
 
   singleLady(e: MatCheckboxChange) {
@@ -136,6 +166,8 @@ export class SearchBusComponent {
   }
 
   selectBus(bus: Ibus) {
+    console.log(bus);
+    
     this.selectedBus = bus;
   }
 

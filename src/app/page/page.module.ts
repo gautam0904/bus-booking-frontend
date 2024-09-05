@@ -33,6 +33,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatChipsModule } from '@angular/material/chips';
+import { BookingsComponent } from './bookings/bookings.component';
 @NgModule({
   declarations: [
     DashboardComponent,
@@ -42,7 +43,8 @@ import { MatChipsModule } from '@angular/material/chips';
     SearchBusComponent,
     UsersComponent,
     RouteComponent,
-    StationsComponent
+    StationsComponent,
+    BookingsComponent
   ],
   imports: [
     CommonModule,

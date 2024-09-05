@@ -16,7 +16,10 @@
               <mat-icon>search</mat-icon> Search Bus
             </button>
             <button *ngIf="role === 'admin' && !loading" mat-raised-button color="primary" (click)="addbus()">
-              <mat-icon>directions_bus</mat-icon> Add Bus
+              <i class="fa-solid fa-plus"></i> Add Bus
+            </button>
+            <button *ngIf="role === 'admin' && !loading" mat-raised-button color="primary" [routerLink]="['/search-bus' ,{'getAll':true}]">
+              <mat-icon>directions_bus</mat-icon> All Bus
             </button>
           </div>
         </mat-card-content>

@@ -8,6 +8,7 @@ import { SearchBusComponent } from './search-bus/search-bus.component';
 import { RouteComponent } from './route/route.component';
 import { UsersComponent } from './users/users.component';
 import { StationsComponent } from './stations/stations.component';
+import { BookingsComponent } from './bookings/bookings.component';
 
 const routes: Routes = [
   {
@@ -41,6 +42,10 @@ const routes: Routes = [
   {
     path : 'stations',
     component : StationsComponent
+  },
+  {
+    path : 'bookings',
+    component : BookingsComponent
   },
   {
     path : '**',
